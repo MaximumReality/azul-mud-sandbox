@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Azul & Mochkil MUD Sandbox – Godville Mode + Forest</title>
+<title>Azul & Mochkil MUD Sandbox – Forest & Trading</title>
 
 <style>
 body {
@@ -56,7 +56,7 @@ img.sprite { position: absolute; width: 64px; image-rendering: pixelated; z-inde
   <img id="azul" class="sprite" src="https://raw.githubusercontent.com/MaximumReality/azul-story-cyoa-sandbox/main/azul.png">
   <img id="mochkil" class="sprite" src="https://raw.githubusercontent.com/MaximumReality/azul-story-cyoa-sandbox/main/mochkil.png">
 
-  <h1>Azul & Mochkil MUD Sandbox – Godville + Forest</h1>
+  <h1>Azul & Mochkil MUD Sandbox – Forest & Trading</h1>
 
   <div id="story"></div>
   <div id="loading">💾 Reading adventure from disk...</div>
@@ -80,7 +80,7 @@ const rooms = {
   library: { description: "Endless shelves of dusty books, some levitating mysteriously.", actions:["Read a book","Search for spell scroll","Return to Lab"] },
   courtyard: { description: "A small courtyard with a fountain and glowing mushrooms.", actions:["Pick a mushroom","Throw coin in fountain","Go to Forest","Return to Lab"] },
   attic: { description: "A dark dusty attic. You hear squeaks.", actions:["Search boxes","Chase mouse","Return to Lab"] },
-  forest: { description: "You step into a mysterious forest. Trees glow faintly, mushrooms sprout in strange patterns, and the wind whispers secrets.", actions:["Pick glowing mushroom","Talk to squirrel","Explore deeper","Return to Courtyard"] }
+  forest: { description: "You step into a mysterious forest. Trees glow faintly, mushrooms sprout in strange patterns, and the wind whispers secrets.", actions:["Pick glowing mushroom","Talk to squirrel","Explore deeper","Trade mushroom","Return to Courtyard"] }
 };
 
 let currentRoom = 'lab';
@@ -143,6 +143,16 @@ const forestComments=["A bird says: 'Don't look behind the trees!'","Mochkil hid
 function randomForestComment(){ if(currentRoom==='forest' && Math.random()<0.4 && !typing){ const c=forestComments[Math.floor(Math.random()*forestComments.length)]; typeWriter(c); } }
 setInterval(randomForestComment,8000);
 
+// ===== Mochkil stealing Azul-o's box =====
+function mochkilSteal(){
+  if(Math.random()<0.2 && inventory.includes("Azul-o's box")){
+    inventory = inventory.filter(i=>"Azul-o's box"!==i);
+    updateInventory();
+    typeWriter("Mochkil snatches the Azul-o’s box! Naughty kitty! 🍫", null);
+  }
+}
+setInterval(mochkilSteal,12000);
+
 // ===== Actions =====
 function handleAction(action){
   // Room navigation
@@ -162,6 +172,19 @@ function handleAction(action){
   if(action.includes("Talk to squirrel") && currentRoom==='forest'){ const msgs=["The squirrel stares at you suspiciously.","Squirrel chat: 'I saw nothing. Promise.'","Squirrel tosses you an acorn."]; typeWriter(msgs[Math.floor(Math.random()*msgs.length)],mochkilChaos); return; }
   if(action.includes("Explore deeper") && currentRoom==='forest'){ const outcomes=["You find a hidden clearing with glowing mushrooms.","Mochkil hides behind a tree, giggling.","Azul floats through branches making jokes.","A mysterious voice whispers: 'Beware the cookie thief...'"]; typeWriter(outcomes[Math.floor(Math.random()*outcomes.length)],mochkilChaos); return; }
 
+  // Trading in forest
+  if(action.includes("Trade mushroom") && currentRoom==='forest'){
+    if(inventory.includes("glowing mushroom")){
+      inventory = inventory.filter(i => i!=="glowing mushroom");
+      inventory.push("Azul-o's box");
+      updateInventory();
+      typeWriter("You trade a glowing mushroom and receive a box of Azul-o’s! Mochkil eyes it hungrily. 🍫", mochkilChaos);
+    } else {
+      typeWriter("You have nothing to trade. The squirrel looks disappointed.", mochkilChaos);
+    }
+    return;
+  }
+
   // Library fun
   if(action.includes("Read a book") && currentRoom==='library'){ const jokes=["You read a book. The book ignores you. Rude.","Azul whispers: 'Try turning it off and on.'","A tiny goblin pops out and says: 'Socks are better than shoes!'"]; typeWriter(jokes[Math.floor(Math.random()*jokes.length)],mochkilChaos); return; }
   if(action.includes("Search for spell scroll") && currentRoom==='library'){ inventory.push("spell scroll"); updateInventory(); typeWriter("You find a spell scroll! Who knows what it does...",mochkilChaos); return; }
@@ -175,14 +198,13 @@ function handleAction(action){
 }
 
 // ===== Inventory =====
-function updateInventory(){ inventoryEl.textContent="Inventory: "+(inventory.length?inventory.join(','):'None'); }
+function updateInventory(){ inventoryEl.textContent="Inventory: "+(inventory.length?inventory.join(', '):'None'); }
 
 // ===== Input =====
 sendBtn.onclick=()=>{ const v=userInput.value.trim(); if(v) handleAction(v); userInput.value=''; };
 
 // ===== Init =====
 renderRoom(); updateInventory();
-
 </script>
 </body>
 </html>
