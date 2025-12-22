@@ -16,7 +16,7 @@
   .container {
     max-width: 420px;
     margin: auto;
-    padding: 12px 12px 80px 12px; /* bottom padding keeps sprites clear */
+    padding: 12px 12px 80px 12px;
     position: relative;
   }
 
@@ -29,7 +29,7 @@
     min-height: 120px;
     margin: 10px 0;
     position: relative;
-    z-index: 10; /* above sprites */
+    z-index: 10;
   }
 
   #actions button {
@@ -49,7 +49,7 @@
     gap: 6px;
     margin-top: 10px;
     position: relative;
-    z-index: 5; /* above Mochkil */
+    z-index: 5;
   }
 
   input {
@@ -60,11 +60,12 @@
     position: absolute;
     width: 64px;
     image-rendering: pixelated;
-    z-index: 2; /* behind story and input */
+    z-index: 2;
+    transition: all 0.3s ease; /* smooth movement for Mochkil */
   }
 
   #azul { top: 10px; left: 10px; }
-  #mochkil { bottom: 20px; right: 10px; } /* slightly above input row */
+  #mochkil { bottom: 20px; right: 10px; }
 </style>
 </head>
 
@@ -125,6 +126,7 @@ const inventoryEl = document.getElementById('inventory');
 const userInput = document.getElementById('userInput');
 const sendBtn = document.getElementById('sendBtn');
 const loadingEl = document.getElementById('loading');
+const mochkilEl = document.getElementById('mochkil');
 
 // ===== Helpers =====
 function showLoading(cb){
@@ -164,21 +166,44 @@ function renderRoom(){
   });
 }
 
+// ===== Mochkil Mischief =====
+function mochkilChaos() {
+  if(Math.random() < 0.4) { // 40% chance
+    typeWriter("Mochkil is being naughty!", ()=>{
+      // random position within container safe zone
+      const x = Math.random() * 300;
+      const y = Math.random() * 200;
+      mochkilEl.style.left = x + 'px';
+      mochkilEl.style.top = y + 'px';
+      
+      // occasionally shuffle action buttons
+      if(Math.random() < 0.5) {
+        for(let i = actionsEl.children.length; i >= 0; i--){
+          actionsEl.appendChild(actionsEl.children[Math.random()*i|0]);
+        }
+      }
+    });
+  }
+}
+
 // ===== Actions =====
 function handleAction(action){
   if(action.includes("Pantry")){
     currentRoom = 'pantry';
     renderRoom();
+    mochkilChaos();
     return;
   }
   if(action.includes("bookshelf")){
     currentRoom = 'potionChamber';
     renderRoom();
+    mochkilChaos();
     return;
   }
   if(action.includes("Return")){
     currentRoom = 'lab';
     renderRoom();
+    mochkilChaos();
     return;
   }
 
@@ -186,17 +211,17 @@ function handleAction(action){
   if(action.includes("Take cookie") && currentRoom==='pantry' && !inventory.includes("cookie")){
     inventory.push("cookie");
     updateInventory();
-    typeWriter("You grab a cookie. Mochkil squeals happily!");
+    typeWriter("You grab a cookie. Mochkil squeals happily!", mochkilChaos);
     return;
   }
   if(action.includes("Take sparkling elixir") && currentRoom==='potionChamber' && !inventory.includes("sparkling elixir")){
     inventory.push("sparkling elixir");
     updateInventory();
-    typeWriter("You carefully grab the Sparkling Elixir. Azul hums approvingly!");
+    typeWriter("You carefully grab the Sparkling Elixir. Azul hums approvingly!", mochkilChaos);
     return;
   }
 
-  typeWriter(`You attempt to ${action}. Something happens.`);
+  typeWriter(`You attempt to ${action}. Something happens.`, mochkilChaos);
 }
 
 // ===== Inventory =====
