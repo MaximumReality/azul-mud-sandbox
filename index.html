@@ -32,16 +32,23 @@
     z-index: 10;
   }
 
+  #actions {
+    position: relative;
+    z-index: 20; /* always above sprites */
+  }
+
   #actions button {
     display: block;
     width: 100%;
     margin: 4px 0;
-    z-index: 10;
+    padding: 10px;
+    font-size: 1.1em;
   }
 
   #inventory {
     margin-top: 8px;
-    z-index: 10;
+    position: relative;
+    z-index: 20;
   }
 
   #inputRow {
@@ -49,19 +56,21 @@
     gap: 6px;
     margin-top: 10px;
     position: relative;
-    z-index: 5;
+    z-index: 20; /* input above sprites */
   }
 
   input {
     flex: 1;
+    padding: 8px;
+    font-size: 1em;
   }
 
   img.sprite {
     position: absolute;
     width: 64px;
     image-rendering: pixelated;
-    z-index: 2;
-    transition: all 0.3s ease; /* smooth movement for Mochkil */
+    z-index: 5; /* behind buttons/input */
+    transition: all 0.3s ease;
   }
 
   #azul { top: 10px; left: 10px; }
@@ -161,8 +170,9 @@ function renderActions(){
 
 function renderRoom(){
   showLoading(()=>{
-    typeWriter(rooms[currentRoom].description);
-    renderActions();
+    typeWriter(rooms[currentRoom].description, ()=>{
+      renderActions(); // render buttons after text
+    });
   });
 }
 
@@ -170,7 +180,7 @@ function renderRoom(){
 function mochkilChaos() {
   if(Math.random() < 0.4) { // 40% chance
     typeWriter("Mochkil is being naughty!", ()=>{
-      // random position within container safe zone
+      // random position within container
       const x = Math.random() * 300;
       const y = Math.random() * 200;
       mochkilEl.style.left = x + 'px';
