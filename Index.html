@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Azul & Mochkil MUD Sandbox</title>
+
+<style>
+  body {
+    background: #0b0b0b;
+    color: #e0e0e0;
+    font-family: monospace;
+    margin: 0;
+    padding: 0;
+  }
+
+  .container {
+    max-width: 420px;
+    margin: auto;
+    padding: 12px 12px 80px 12px; /* bottom padding keeps sprites clear */
+    position: relative;
+  }
+
+  h1 {
+    margin-top: 80px;
+    text-align: center;
+  }
+
+  #story {
+    min-height: 120px;
+    margin: 10px 0;
+    position: relative;
+    z-index: 10; /* above sprites */
+  }
+
+  #actions button {
+    display: block;
+    width: 100%;
+    margin: 4px 0;
+    z-index: 10;
+  }
+
+  #inventory {
+    margin-top: 8px;
+    z-index: 10;
+  }
+
+  #inputRow {
+    display: flex;
+    gap: 6px;
+    margin-top: 10px;
+    position: relative;
+    z-index: 5; /* above Mochkil */
+  }
+
+  input {
+    flex: 1;
+  }
+
+  img.sprite {
+    position: absolute;
+    width: 64px;
+    image-rendering: pixelated;
+    z-index: 2; /* behind story and input */
+  }
+
+  #azul { top: 10px; left: 10px; }
+  #mochkil { bottom: 20px; right: 10px; } /* slightly above input row */
+</style>
+</head>
+
+<body>
+<div class="container">
+
+  <img id="azul" class="sprite" src="https://raw.githubusercontent.com/MaximumReality/azul-story-cyoa-sandbox/main/azul.png">
+  <img id="mochkil" class="sprite" src="https://raw.githubusercontent.com/MaximumReality/azul-story-cyoa-sandbox/main/mochkil.png">
+
+  <h1>Azul & Mochkil MUD Sandbox</h1>
+
+  <div id="story"></div>
+  <div id="loading">💾 Reading adventure from disk...</div>
+  <div id="dice">🎲</div>
+  <div id="actions"></div>
+  <div id="inventory"></div>
+
+  <div id="inputRow">
+    <input id="userInput" placeholder="Enter command">
+    <button id="sendBtn">Send</button>
+  </div>
+
+</div>
+
+<script>
+// ===== Adventure Rooms =====
+const rooms = {
+  lab: {
+    description: "You are in the Glowing Lab. What will you do?",
+    actions: [
+      "Inspect test tubes",
+      "Go to Secret Pantry",
+      "Search glowing bookshelf"
+    ]
+  },
+  pantry: {
+    description: "You are in the Secret Pantry. Shelves overflow with cookies.",
+    actions: [
+      "Take cookie",
+      "Return to Lab"
+    ]
+  },
+  potionChamber: {
+    description: "A hidden chamber filled with glowing potions.",
+    actions: [
+      "Take sparkling elixir",
+      "Return to Lab"
+    ]
+  }
+};
+
+let currentRoom = 'lab';
+let inventory = [];
+
+const storyEl = document.getElementById('story');
+const actionsEl = document.getElementById('actions');
+const inventoryEl = document.getElementById('inventory');
+const userInput = document.getElementById('userInput');
+const sendBtn = document.getElementById('sendBtn');
+const loadingEl = document.getElementById('loading');
+
+// ===== Helpers =====
+function showLoading(cb){
+  loadingEl.style.display = 'block';
+  setTimeout(()=>{
+    loadingEl.style.display = 'none';
+    if(cb) cb();
+  }, 400);
+}
+
+function typeWriter(text, cb){
+  storyEl.textContent = '';
+  let i = 0;
+  (function step(){
+    if(i < text.length){
+      storyEl.textContent += text[i++];
+      setTimeout(step, 25);
+    } else if(cb) cb();
+  })();
+}
+
+// ===== Render =====
+function renderActions(){
+  actionsEl.innerHTML = '';
+  rooms[currentRoom].actions.forEach(a=>{
+    const b = document.createElement('button');
+    b.textContent = a;
+    b.onclick = ()=>handleAction(a);
+    actionsEl.appendChild(b);
+  });
+}
+
+function renderRoom(){
+  showLoading(()=>{
+    typeWriter(rooms[currentRoom].description);
+    renderActions();
+  });
+}
+
+// ===== Actions =====
+function handleAction(action){
+  if(action.includes("Pantry")){
+    currentRoom = 'pantry';
+    renderRoom();
+    return;
+  }
+  if(action.includes("bookshelf")){
+    currentRoom = 'potionChamber';
+    renderRoom();
+    return;
+  }
+  if(action.includes("Return")){
+    currentRoom = 'lab';
+    renderRoom();
+    return;
+  }
+
+  // Item handling
+  if(action.includes("Take cookie") && currentRoom==='pantry' && !inventory.includes("cookie")){
+    inventory.push("cookie");
+    updateInventory();
+    typeWriter("You grab a cookie. Mochkil squeals happily!");
+    return;
+  }
+  if(action.includes("Take sparkling elixir") && currentRoom==='potionChamber' && !inventory.includes("sparkling elixir")){
+    inventory.push("sparkling elixir");
+    updateInventory();
+    typeWriter("You carefully grab the Sparkling Elixir. Azul hums approvingly!");
+    return;
+  }
+
+  typeWriter(`You attempt to ${action}. Something happens.`);
+}
+
+// ===== Inventory =====
+function updateInventory(){
+  inventoryEl.textContent = "Inventory: " + (inventory.length ? inventory.join(', ') : 'None');
+}
+
+// ===== Input =====
+sendBtn.onclick = ()=>{
+  const v = userInput.value.trim();
+  if(v) handleAction(v);
+  userInput.value = '';
+};
+
+// ===== Init =====
+renderRoom();
+updateInventory();
+</script>
+
+</body>
+</html>
