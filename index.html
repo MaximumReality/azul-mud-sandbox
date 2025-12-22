@@ -29,7 +29,7 @@
   }
 
   #story {
-    min-height: 120px;
+    min-height: 140px;
     margin: 10px 0;
     position: relative;
     z-index: 10;
@@ -138,26 +138,28 @@
 // ===== Adventure Rooms =====
 const rooms = {
   lab: {
-    description: "You are in the Glowing Lab. What will you do?",
-    actions: [
-      "Inspect test tubes",
-      "Go to Secret Pantry",
-      "Search glowing bookshelf"
-    ]
+    description: "You are in the Glowing Lab. Test tubes bubble, strange liquids float mid-air.",
+    actions: ["Inspect test tubes", "Go to Secret Pantry", "Search glowing bookshelf", "Go to Library", "Go to Courtyard"]
   },
   pantry: {
     description: "You are in the Secret Pantry. Shelves overflow with cookies.",
-    actions: [
-      "Take cookie",
-      "Return to Lab"
-    ]
+    actions: ["Take cookie", "Return to Lab", "Peek behind crates"]
   },
   potionChamber: {
     description: "A hidden chamber filled with glowing potions.",
-    actions: [
-      "Take sparkling elixir",
-      "Return to Lab"
-    ]
+    actions: ["Take sparkling elixir", "Return to Lab", "Drink random potion"]
+  },
+  library: {
+    description: "Endless shelves of dusty books, some levitating mysteriously.",
+    actions: ["Read a book", "Search for spell scroll", "Return to Lab"]
+  },
+  courtyard: {
+    description: "A small courtyard with a fountain and glowing mushrooms.",
+    actions: ["Pick a mushroom", "Throw coin in fountain", "Return to Lab"]
+  },
+  attic: {
+    description: "A dark dusty attic. You hear squeaks.",
+    actions: ["Search boxes", "Chase mouse", "Return to Lab"]
   }
 };
 
@@ -241,25 +243,15 @@ function mochkilChaos() {
 
 // ===== Actions =====
 function handleAction(action){
-  if(action.includes("Pantry")){
-    currentRoom = 'pantry';
-    renderRoom();
-    mochkilChaos();
-    return;
-  }
-  if(action.includes("bookshelf")){
-    currentRoom = 'potionChamber';
-    renderRoom();
-    mochkilChaos();
-    return;
-  }
-  if(action.includes("Return")){
-    currentRoom = 'lab';
-    renderRoom();
-    mochkilChaos();
-    return;
-  }
+  // Room navigation
+  if(action.includes("Pantry")) { currentRoom='pantry'; renderRoom(); mochkilChaos(); return; }
+  if(action.includes("bookshelf")) { currentRoom='potionChamber'; renderRoom(); mochkilChaos(); return; }
+  if(action.includes("Return") || action.includes("Lab")) { currentRoom='lab'; renderRoom(); mochkilChaos(); return; }
+  if(action.includes("Library")) { currentRoom='library'; renderRoom(); mochkilChaos(); return; }
+  if(action.includes("Courtyard")) { currentRoom='courtyard'; renderRoom(); mochkilChaos(); return; }
+  if(action.includes("Attic")) { currentRoom='attic'; renderRoom(); mochkilChaos(); return; }
 
+  // Items
   if(action.includes("Take cookie") && currentRoom==='pantry' && !inventory.includes("cookie")){
     inventory.push("cookie");
     updateInventory();
@@ -272,7 +264,49 @@ function handleAction(action){
     typeWriter("You carefully grab the Sparkling Elixir. Azul hums approvingly!", mochkilChaos);
     return;
   }
+  if(action.includes("Drink random potion") && currentRoom==='potionChamber'){
+    const effects = ["You glow like a neon sign! 🌟","You hiccup rainbows 🌈","You levitate for 5 seconds 🪂"];
+    const effect = effects[Math.floor(Math.random()*effects.length)];
+    typeWriter(effect, mochkilChaos);
+    return;
+  }
+  if(action.includes("Pick a mushroom") && currentRoom==='courtyard'){
+    inventory.push("mushroom");
+    updateInventory();
+    typeWriter("You pick a glowing mushroom. Mochkil eyes it suspiciously.", mochkilChaos);
+    return;
+  }
 
+  // Library fun
+  if(action.includes("Read a book") && currentRoom==='library'){
+    const jokes = [
+      "You read a book. The book ignores you. Rude.",
+      "Azul whispers: 'Try turning it off and on.'",
+      "A tiny goblin pops out and says: 'Socks are better than shoes!'"
+    ];
+    const joke = jokes[Math.floor(Math.random()*jokes.length)];
+    typeWriter(joke, mochkilChaos);
+    return;
+  }
+
+  if(action.includes("Search for spell scroll") && currentRoom==='library'){
+    inventory.push("spell scroll");
+    updateInventory();
+    typeWriter("You find a spell scroll! Who knows what it does...", mochkilChaos);
+    return;
+  }
+
+  // Attic fun
+  if(action.includes("Search boxes") && currentRoom==='attic'){
+    typeWriter("You rummage through dusty boxes. Mochkil hides in one. Classic.", mochkilChaos);
+    return;
+  }
+  if(action.includes("Chase mouse") && currentRoom==='attic'){
+    typeWriter("The mouse squeaks and Mochkil gives chase, knocking over a candle. Oops.", mochkilChaos);
+    return;
+  }
+
+  // Default
   typeWriter(`You attempt to ${action}. Something happens.`, mochkilChaos);
 }
 
