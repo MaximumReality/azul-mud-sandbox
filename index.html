@@ -6,11 +6,12 @@
 
 <style>
   body {
-    background: #0a0a23;           /* deep midnight blue */
-    color: #e0e0ff;                /* soft glowing text */
+    background: #0a0a23;
+    color: #00ffff;
     font-family: monospace;
     margin: 0;
     padding: 0;
+    text-shadow: 0 0 6px #00ffff, 0 0 12px #00ffff;
   }
 
   .container {
@@ -23,8 +24,8 @@
   h1 {
     margin-top: 80px;
     text-align: center;
-    color: #ffcc00;                /* glowing yellow title */
-    text-shadow: 0 0 6px #ffcc00, 0 0 12px #ffcc00;
+    color: #ffcc00;
+    text-shadow: 0 0 6px #ffcc00, 0 0 12px #ffcc00, 0 0 20px #ffdd33;
   }
 
   #story {
@@ -32,18 +33,13 @@
     margin: 10px 0;
     position: relative;
     z-index: 10;
-    color: #a0f0ff;               /* cyan glow for story text */
-    text-shadow: 0 0 4px #a0f0ff;
+    color: #00ffff;
+    text-shadow: 0 0 4px #00ffff, 0 0 8px #00ffff;
   }
 
   #loading, #dice {
-    color: #ff66cc;               /* bright pink for effects */
-    text-shadow: 0 0 4px #ff66cc;
-  }
-
-  #actions {
-    position: relative;
-    z-index: 20; /* above sprites */
+    color: #ff66cc;
+    text-shadow: 0 0 6px #ff66cc, 0 0 12px #ff66cc;
   }
 
   #actions button {
@@ -52,24 +48,24 @@
     margin: 4px 0;
     padding: 10px;
     font-size: 1.1em;
-    background: #222244;
+    background: #111144;
     color: #fff;
-    border: 1px solid #a0f0ff;
+    border: 1px solid #00ffff;
     border-radius: 4px;
-    text-shadow: 0 0 2px #a0f0ff;
+    text-shadow: 0 0 2px #00ffff;
   }
 
   #actions button:hover {
-    background: #4444aa;
-    box-shadow: 0 0 6px #a0f0ff;
+    background: #3333aa;
+    box-shadow: 0 0 12px #00ffff;
   }
 
   #inventory {
     margin-top: 8px;
     position: relative;
     z-index: 20;
-    color: #ffcc66;               /* golden glow for inventory */
-    text-shadow: 0 0 4px #ffcc66;
+    color: #ffcc66;
+    text-shadow: 0 0 6px #ffcc66, 0 0 12px #ffcc66;
   }
 
   #inputRow {
@@ -85,15 +81,15 @@
     padding: 8px;
     font-size: 1em;
     background: #111133;
-    color: #a0f0ff;
-    border: 1px solid #a0f0ff;
+    color: #00ffff;
+    border: 1px solid #00ffff;
     border-radius: 4px;
   }
 
   #inputRow button {
     background: #333366;
     color: #fff;
-    border: 1px solid #a0f0ff;
+    border: 1px solid #00ffff;
     border-radius: 4px;
     padding: 8px 12px;
     font-size: 1em;
@@ -103,12 +99,17 @@
     position: absolute;
     width: 64px;
     image-rendering: pixelated;
-    z-index: 5; /* behind UI */
+    z-index: 5;
     transition: all 0.3s ease;
   }
 
-  #azul { top: 10px; left: 10px; }
-  #mochkil { bottom: 20px; right: 10px; }
+  #azul { top: 10px; left: 10px; animation: glow 2s infinite; }
+  #mochkil { bottom: 20px; right: 10px; animation: glow 2s infinite alternate; }
+
+  @keyframes glow {
+    0%, 100% { filter: drop-shadow(0 0 4px #00ffff); }
+    50% { filter: drop-shadow(0 0 12px #00ffff); }
+  }
 </style>
 </head>
 
@@ -162,6 +163,7 @@ const rooms = {
 
 let currentRoom = 'lab';
 let inventory = [];
+let typing = false;
 
 const storyEl = document.getElementById('story');
 const actionsEl = document.getElementById('actions');
@@ -181,13 +183,18 @@ function showLoading(cb){
 }
 
 function typeWriter(text, cb){
+  if(typing) return;
+  typing = true;
   storyEl.textContent = '';
   let i = 0;
   (function step(){
     if(i < text.length){
       storyEl.textContent += text[i++];
       setTimeout(step, 25);
-    } else if(cb) cb();
+    } else {
+      typing = false;
+      if(cb) cb();
+    }
   })();
 }
 
@@ -205,19 +212,17 @@ function renderActions(){
 function renderRoom(){
   showLoading(()=>{
     typeWriter(rooms[currentRoom].description, ()=>{
-      renderActions(); // render buttons after text
+      renderActions();
     });
   });
 }
 
 // ===== Mochkil Mischief =====
 function mochkilChaos() {
-  if(Math.random() < 0.4) { // 40% chance
+  if(Math.random() < 0.4 && !typing) {
     typeWriter("Mochkil is being naughty!", ()=>{
-
-      // Safe bounds inside container
       const containerWidth = document.querySelector('.container').clientWidth;
-      const containerHeight = 350; // leave bottom free for input/buttons
+      const containerHeight = 350;
 
       const x = Math.random() * (containerWidth - 64);
       const y = Math.random() * (containerHeight - 64);
@@ -225,7 +230,6 @@ function mochkilChaos() {
       mochkilEl.style.left = x + 'px';
       mochkilEl.style.top = y + 'px';
       
-      // Shuffle buttons if more than 1
       if(Math.random() < 0.5 && actionsEl.children.length > 1){
         for(let i = actionsEl.children.length; i >= 0; i--){
           actionsEl.appendChild(actionsEl.children[Math.floor(Math.random()*i)]);
@@ -256,7 +260,6 @@ function handleAction(action){
     return;
   }
 
-  // Item handling
   if(action.includes("Take cookie") && currentRoom==='pantry' && !inventory.includes("cookie")){
     inventory.push("cookie");
     updateInventory();
