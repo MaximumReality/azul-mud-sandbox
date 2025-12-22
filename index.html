@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Azul & Mochkil MUD Sandbox – Godville Mode</title>
+<title>Azul & Mochkil MUD Sandbox – Godville Mode + Forest</title>
 
 <style>
 body {
@@ -28,88 +28,25 @@ h1 {
   text-shadow: 0 0 6px #ffcc00, 0 0 12px #ffcc00, 0 0 20px #ffdd33;
 }
 
-#story {
-  min-height: 140px;
-  margin: 10px 0;
-  position: relative;
-  z-index: 10;
-  color: #00ffff;
-  text-shadow: 0 0 4px #00ffff, 0 0 8px #00ffff;
-}
-
-#loading, #dice {
-  color: #ff66cc;
-  text-shadow: 0 0 6px #ff66cc, 0 0 12px #ff66cc;
-}
+#story { min-height: 140px; margin: 10px 0; z-index: 10; color: #00ffff; text-shadow: 0 0 4px #00ffff, 0 0 8px #00ffff; }
+#loading, #dice { color: #ff66cc; text-shadow: 0 0 6px #ff66cc, 0 0 12px #ff66cc; }
 
 #actions button {
-  display: block;
-  width: 100%;
-  margin: 4px 0;
-  padding: 10px;
-  font-size: 1.1em;
-  background: #111144;
-  color: #fff;
-  border: 1px solid #00ffff;
-  border-radius: 4px;
-  text-shadow: 0 0 2px #00ffff;
+  display: block; width: 100%; margin: 4px 0; padding: 10px;
+  font-size: 1.1em; background: #111144; color: #fff; border: 1px solid #00ffff; border-radius: 4px; text-shadow: 0 0 2px #00ffff;
 }
+#actions button:hover { background: #3333aa; box-shadow: 0 0 12px #00ffff; }
 
-#actions button:hover {
-  background: #3333aa;
-  box-shadow: 0 0 12px #00ffff;
-}
+#inventory { margin-top: 8px; position: relative; z-index: 20; color: #ffcc66; text-shadow: 0 0 6px #ffcc66, 0 0 12px #ffcc66; }
 
-#inventory {
-  margin-top: 8px;
-  position: relative;
-  z-index: 20;
-  color: #ffcc66;
-  text-shadow: 0 0 6px #ffcc66, 0 0 12px #ffcc66;
-}
+#inputRow { display: flex; gap: 6px; margin-top: 10px; position: relative; z-index: 20; }
+#inputRow input { flex: 1; padding: 8px; font-size: 1em; background: #111133; color: #00ffff; border: 1px solid #00ffff; border-radius: 4px; }
+#inputRow button { background: #333366; color: #fff; border: 1px solid #00ffff; border-radius: 4px; padding: 8px 12px; font-size: 1em; }
 
-#inputRow {
-  display: flex;
-  gap: 6px;
-  margin-top: 10px;
-  position: relative;
-  z-index: 20;
-}
-
-#inputRow input {
-  flex: 1;
-  padding: 8px;
-  font-size: 1em;
-  background: #111133;
-  color: #00ffff;
-  border: 1px solid #00ffff;
-  border-radius: 4px;
-}
-
-#inputRow button {
-  background: #333366;
-  color: #fff;
-  border: 1px solid #00ffff;
-  border-radius: 4px;
-  padding: 8px 12px;
-  font-size: 1em;
-}
-
-img.sprite {
-  position: absolute;
-  width: 64px;
-  image-rendering: pixelated;
-  z-index: 5;
-  transition: all 0.3s ease;
-}
-
+img.sprite { position: absolute; width: 64px; image-rendering: pixelated; z-index: 5; transition: all 0.3s ease; }
 #azul { top: 10px; left: 10px; animation: glow 2s infinite; }
 #mochkil { bottom: 20px; right: 10px; animation: glow 2s infinite alternate; }
-
-@keyframes glow {
-  0%, 100% { filter: drop-shadow(0 0 4px #00ffff); }
-  50% { filter: drop-shadow(0 0 12px #00ffff); }
-}
+@keyframes glow { 0%,100%{filter: drop-shadow(0 0 4px #00ffff);}50%{filter: drop-shadow(0 0 12px #00ffff);} }
 </style>
 </head>
 
@@ -119,7 +56,7 @@ img.sprite {
   <img id="azul" class="sprite" src="https://raw.githubusercontent.com/MaximumReality/azul-story-cyoa-sandbox/main/azul.png">
   <img id="mochkil" class="sprite" src="https://raw.githubusercontent.com/MaximumReality/azul-story-cyoa-sandbox/main/mochkil.png">
 
-  <h1>Azul & Mochkil MUD Sandbox – Godville Mode</h1>
+  <h1>Azul & Mochkil MUD Sandbox – Godville + Forest</h1>
 
   <div id="story"></div>
   <div id="loading">💾 Reading adventure from disk...</div>
@@ -137,30 +74,13 @@ img.sprite {
 <script>
 // ===== Adventure Rooms =====
 const rooms = {
-  lab: {
-    description: "You are in the Glowing Lab. Test tubes bubble, strange liquids float mid-air.",
-    actions: ["Inspect test tubes", "Go to Secret Pantry", "Search glowing bookshelf", "Go to Library", "Go to Courtyard"]
-  },
-  pantry: {
-    description: "You are in the Secret Pantry. Shelves overflow with cookies.",
-    actions: ["Take cookie", "Return to Lab", "Peek behind crates"]
-  },
-  potionChamber: {
-    description: "A hidden chamber filled with glowing potions.",
-    actions: ["Take sparkling elixir", "Return to Lab", "Drink random potion"]
-  },
-  library: {
-    description: "Endless shelves of dusty books, some levitating mysteriously.",
-    actions: ["Read a book", "Search for spell scroll", "Return to Lab"]
-  },
-  courtyard: {
-    description: "A small courtyard with a fountain and glowing mushrooms.",
-    actions: ["Pick a mushroom", "Throw coin in fountain", "Return to Lab"]
-  },
-  attic: {
-    description: "A dark dusty attic. You hear squeaks.",
-    actions: ["Search boxes", "Chase mouse", "Return to Lab"]
-  }
+  lab: { description: "You are in the Glowing Lab. Test tubes bubble, strange liquids float mid-air.", actions:["Inspect test tubes","Go to Secret Pantry","Search glowing bookshelf","Go to Library","Go to Courtyard"] },
+  pantry: { description: "You are in the Secret Pantry. Shelves overflow with cookies.", actions:["Take cookie","Return to Lab","Peek behind crates"] },
+  potionChamber: { description: "A hidden chamber filled with glowing potions.", actions:["Take sparkling elixir","Return to Lab","Drink random potion"] },
+  library: { description: "Endless shelves of dusty books, some levitating mysteriously.", actions:["Read a book","Search for spell scroll","Return to Lab"] },
+  courtyard: { description: "A small courtyard with a fountain and glowing mushrooms.", actions:["Pick a mushroom","Throw coin in fountain","Go to Forest","Return to Lab"] },
+  attic: { description: "A dark dusty attic. You hear squeaks.", actions:["Search boxes","Chase mouse","Return to Lab"] },
+  forest: { description: "You step into a mysterious forest. Trees glow faintly, mushrooms sprout in strange patterns, and the wind whispers secrets.", actions:["Pick glowing mushroom","Talk to squirrel","Explore deeper","Return to Courtyard"] }
 };
 
 let currentRoom = 'lab';
@@ -176,178 +96,93 @@ const loadingEl = document.getElementById('loading');
 const mochkilEl = document.getElementById('mochkil');
 
 // ===== Helpers =====
-function showLoading(cb){
-  loadingEl.style.display = 'block';
-  setTimeout(()=>{
-    loadingEl.style.display = 'none';
-    if(cb) cb();
-  }, 400);
+function showLoading(cb){ loadingEl.style.display='block'; setTimeout(()=>{ loadingEl.style.display='none'; if(cb) cb(); },400); }
+
+function typeWriter(text, cb){ 
+  if(typing) return; typing=true; storyEl.textContent=''; let i=0; (function step(){ 
+    if(i<text.length){ storyEl.textContent+=text[i++]; setTimeout(step,25); } 
+    else{ typing=false; if(cb) cb(); } 
+  })(); 
 }
 
-function typeWriter(text, cb){
-  if(typing) return;
-  typing = true;
-  storyEl.textContent = '';
-  let i = 0;
-  (function step(){
-    if(i < text.length){
-      storyEl.textContent += text[i++];
-      setTimeout(step, 25);
-    } else {
-      typing = false;
-      if(cb) cb();
-    }
-  })();
-}
+// ===== Dice =====
+function rollDice(){ return Math.floor(Math.random()*6)+1; }
 
 // ===== Render =====
-function renderActions(){
-  actionsEl.innerHTML = '';
-  rooms[currentRoom].actions.forEach(a=>{
-    const b = document.createElement('button');
-    b.textContent = a;
-    b.onclick = ()=>handleAction(a);
-    actionsEl.appendChild(b);
-  });
-}
+function renderActions(){ actionsEl.innerHTML=''; rooms[currentRoom].actions.forEach(a=>{ const b=document.createElement('button'); b.textContent=a; b.onclick=()=>handleAction(a); actionsEl.appendChild(b); }); }
 
-function renderRoom(){
-  showLoading(()=>{
-    typeWriter(rooms[currentRoom].description, ()=>{
-      renderActions();
-    });
-  });
-}
+function renderRoom(){ showLoading(()=>{ typeWriter(rooms[currentRoom].description,()=>{ renderActions(); }); }); }
 
 // ===== Mochkil Mischief =====
-function mochkilChaos() {
-  if(Math.random() < 0.4 && !typing) {
+function mochkilChaos(){
+  if(Math.random()<0.4 && !typing){
     const containerWidth = document.querySelector('.container').clientWidth;
     const containerHeight = 350;
-    const x = Math.random() * (containerWidth - 64);
-    const y = Math.random() * (containerHeight - 64);
+    const x = Math.random()*(containerWidth-64);
+    const y = Math.random()*(containerHeight-64);
+    mochkilEl.style.left=x+'px'; mochkilEl.style.top=y+'px';
 
-    mochkilEl.style.left = x + 'px';
-    mochkilEl.style.top = y + 'px';
-    
-    if(Math.random() < 0.5 && actionsEl.children.length > 1){
-      for(let i = actionsEl.children.length; i >= 0; i--){
-        actionsEl.appendChild(actionsEl.children[Math.floor(Math.random() * i)]);
+    if(Math.random()<0.5 && actionsEl.children.length>1){
+      for(let i=actionsEl.children.length;i>=0;i--){
+        actionsEl.appendChild(actionsEl.children[Math.floor(Math.random()*i)]);
       }
     }
-    
-    const chaosMessages = [
-      "Mochkil is plotting something...",
-      "Mochkil looks bored. Very bored.",
-      "Mochkil sits on a button. Oops!",
-      "Azul rolls eyes at Mochkil's antics."
-    ];
-    
+
+    const chaosMessages=["Mochkil is plotting something...","Mochkil looks bored. Very bored.","Mochkil sits on a button. Oops!","Azul rolls eyes at Mochkil's antics."];
     typeWriter(chaosMessages[Math.floor(Math.random()*chaosMessages.length)]);
   }
 }
 
-// ===== Random Godville-style Comments =====
-const randomComments = [
-  "Mochkil glares at you. 'Really? THAT again?'",
-  "Azul floats by: 'Are you even trying?'",
-  "A floating test tube rolls past. 'Oops! Watch out!'",
-  "Mochkil whispers: 'I hide your cookies. Forever.'",
-  "Azul giggles: 'This potion smells like old cheese!'"
-];
+// ===== Random NPC Comments =====
+const randomComments=["Mochkil glares at you. 'Really? THAT again?'","Azul floats by: 'Are you even trying?'","A floating test tube rolls past. 'Oops! Watch out!'","Mochkil whispers: 'I hide your cookies. Forever.'","Azul giggles: 'This potion smells like old cheese!'"];
+function randomNPCComment(){ if(Math.random()<0.3 && !typing){ const c=randomComments[Math.floor(Math.random()*randomComments.length)]; typeWriter(c); } }
+setInterval(randomNPCComment,7000);
 
-function randomNPCComment() {
-  if(Math.random() < 0.3 && !typing){
-    const comment = randomComments[Math.floor(Math.random() * randomComments.length)];
-    typeWriter(comment);
-  }
-}
-
-setInterval(randomNPCComment, 7000);
+// ===== Forest Comments =====
+const forestComments=["A bird says: 'Don't look behind the trees!'","Mochkil hides in a bush and giggles.","Azul floats above: 'Watch your step, adventurer!'","A squirrel stares at you suspiciously."];
+function randomForestComment(){ if(currentRoom==='forest' && Math.random()<0.4 && !typing){ const c=forestComments[Math.floor(Math.random()*forestComments.length)]; typeWriter(c); } }
+setInterval(randomForestComment,8000);
 
 // ===== Actions =====
 function handleAction(action){
   // Room navigation
-  if(action.includes("Pantry")) { currentRoom='pantry'; renderRoom(); mochkilChaos(); return; }
-  if(action.includes("bookshelf")) { currentRoom='potionChamber'; renderRoom(); mochkilChaos(); return; }
-  if(action.includes("Return") || action.includes("Lab")) { currentRoom='lab'; renderRoom(); mochkilChaos(); return; }
-  if(action.includes("Library")) { currentRoom='library'; renderRoom(); mochkilChaos(); return; }
-  if(action.includes("Courtyard")) { currentRoom='courtyard'; renderRoom(); mochkilChaos(); return; }
-  if(action.includes("Attic")) { currentRoom='attic'; renderRoom(); mochkilChaos(); return; }
+  if(action.includes("Pantry")){currentRoom='pantry'; renderRoom(); mochkilChaos(); return;}
+  if(action.includes("bookshelf")){currentRoom='potionChamber'; renderRoom(); mochkilChaos(); return;}
+  if(action.includes("Return") || action.includes("Lab")){currentRoom='lab'; renderRoom(); mochkilChaos(); return;}
+  if(action.includes("Library")){currentRoom='library'; renderRoom(); mochkilChaos(); return;}
+  if(action.includes("Courtyard")){currentRoom='courtyard'; renderRoom(); mochkilChaos(); return;}
+  if(action.includes("Attic")){currentRoom='attic'; renderRoom(); mochkilChaos(); return;}
+  if(action.includes("Forest")){currentRoom='forest'; renderRoom(); mochkilChaos(); return;}
 
-  // Items
-  if(action.includes("Take cookie") && currentRoom==='pantry' && !inventory.includes("cookie")){
-    inventory.push("cookie");
-    updateInventory();
-    typeWriter("You grab a cookie. Mochkil squeals happily!", mochkilChaos);
-    return;
-  }
-  if(action.includes("Take sparkling elixir") && currentRoom==='potionChamber' && !inventory.includes("sparkling elixir")){
-    inventory.push("sparkling elixir");
-    updateInventory();
-    typeWriter("You carefully grab the Sparkling Elixir. Azul hums approvingly!", mochkilChaos);
-    return;
-  }
-  if(action.includes("Drink random potion") && currentRoom==='potionChamber'){
-    const effects = ["You glow like a neon sign! 🌟","You hiccup rainbows 🌈","You levitate for 5 seconds 🪂"];
-    const effect = effects[Math.floor(Math.random()*effects.length)];
-    typeWriter(effect, mochkilChaos);
-    return;
-  }
-  if(action.includes("Pick a mushroom") && currentRoom==='courtyard'){
-    inventory.push("mushroom");
-    updateInventory();
-    typeWriter("You pick a glowing mushroom. Mochkil eyes it suspiciously.", mochkilChaos);
-    return;
-  }
+  // Items & Dice Effects
+  if(action.includes("Take cookie") && currentRoom==='pantry' && !inventory.includes("cookie")){ inventory.push("cookie"); updateInventory(); typeWriter("You grab a cookie. Mochkil squeals happily!",mochkilChaos); return; }
+  if(action.includes("Take sparkling elixir") && currentRoom==='potionChamber' && !inventory.includes("sparkling elixir")){ inventory.push("sparkling elixir"); updateInventory(); typeWriter("You carefully grab the Sparkling Elixir. Azul hums approvingly!",mochkilChaos); return; }
+  if(action.includes("Drink random potion") && currentRoom==='potionChamber'){ const effects=["You glow like a neon sign! 🌟","You hiccup rainbows 🌈","You levitate for 5 seconds 🪂"]; typeWriter(effects[Math.floor(Math.random()*effects.length)],mochkilChaos); return; }
+  if(action.includes("Pick a mushroom") && (currentRoom==='courtyard'||currentRoom==='forest')){ const dice=rollDice(); inventory.push("glowing mushroom"); updateInventory(); let msg=""; switch(dice){ case 1: msg="The mushroom tastes terrible. Mochkil gags. 🤢"; break; case 2: msg="You pick a mushroom. Nothing happens… for now."; break; case 3: msg="The mushroom glows brighter! You feel slightly heroic."; break; case 4: msg="A tiny fairy pops out and says hello. 🧚"; break; case 5: msg="The mushroom explodes confetti! 🎉"; break; case 6: msg="Mochkil eats it before you can. Classic."; break; } typeWriter(msg,mochkilChaos); return; }
+  if(action.includes("Talk to squirrel") && currentRoom==='forest'){ const msgs=["The squirrel stares at you suspiciously.","Squirrel chat: 'I saw nothing. Promise.'","Squirrel tosses you an acorn."]; typeWriter(msgs[Math.floor(Math.random()*msgs.length)],mochkilChaos); return; }
+  if(action.includes("Explore deeper") && currentRoom==='forest'){ const outcomes=["You find a hidden clearing with glowing mushrooms.","Mochkil hides behind a tree, giggling.","Azul floats through branches making jokes.","A mysterious voice whispers: 'Beware the cookie thief...'"]; typeWriter(outcomes[Math.floor(Math.random()*outcomes.length)],mochkilChaos); return; }
 
   // Library fun
-  if(action.includes("Read a book") && currentRoom==='library'){
-    const jokes = [
-      "You read a book. The book ignores you. Rude.",
-      "Azul whispers: 'Try turning it off and on.'",
-      "A tiny goblin pops out and says: 'Socks are better than shoes!'"
-    ];
-    typeWriter(jokes[Math.floor(Math.random()*jokes.length)], mochkilChaos);
-    return;
-  }
-  if(action.includes("Search for spell scroll") && currentRoom==='library'){
-    inventory.push("spell scroll");
-    updateInventory();
-    typeWriter("You find a spell scroll! Who knows what it does...", mochkilChaos);
-    return;
-  }
+  if(action.includes("Read a book") && currentRoom==='library'){ const jokes=["You read a book. The book ignores you. Rude.","Azul whispers: 'Try turning it off and on.'","A tiny goblin pops out and says: 'Socks are better than shoes!'"]; typeWriter(jokes[Math.floor(Math.random()*jokes.length)],mochkilChaos); return; }
+  if(action.includes("Search for spell scroll") && currentRoom==='library'){ inventory.push("spell scroll"); updateInventory(); typeWriter("You find a spell scroll! Who knows what it does...",mochkilChaos); return; }
 
   // Attic fun
-  if(action.includes("Search boxes") && currentRoom==='attic'){
-    typeWriter("You rummage through dusty boxes. Mochkil hides in one. Classic.", mochkilChaos);
-    return;
-  }
-  if(action.includes("Chase mouse") && currentRoom==='attic'){
-    typeWriter("The mouse squeaks and Mochkil gives chase, knocking over a candle. Oops.", mochkilChaos);
-    return;
-  }
+  if(action.includes("Search boxes") && currentRoom==='attic'){ typeWriter("You rummage through dusty boxes. Mochkil hides in one. Classic.",mochkilChaos); return; }
+  if(action.includes("Chase mouse") && currentRoom==='attic'){ typeWriter("The mouse squeaks and Mochkil gives chase, knocking over a candle. Oops.",mochkilChaos); return; }
 
   // Default
-  typeWriter(`You attempt to ${action}. Something happens.`, mochkilChaos);
+  typeWriter(`You attempt to ${action}. Something happens.`,mochkilChaos);
 }
 
 // ===== Inventory =====
-function updateInventory(){
-  inventoryEl.textContent = "Inventory: " + (inventory.length ? inventory.join(', ') : 'None');
-}
+function updateInventory(){ inventoryEl.textContent="Inventory: "+(inventory.length?inventory.join(','):'None'); }
 
 // ===== Input =====
-sendBtn.onclick = ()=>{
-  const v = userInput.value.trim();
-  if(v) handleAction(v);
-  userInput.value = '';
-};
+sendBtn.onclick=()=>{ const v=userInput.value.trim(); if(v) handleAction(v); userInput.value=''; };
 
 // ===== Init =====
-renderRoom();
-updateInventory();
-</script>
+renderRoom(); updateInventory();
 
+</script>
 </body>
 </html>
