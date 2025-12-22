@@ -2,114 +2,114 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Azul & Mochkil MUD Sandbox</title>
+<title>Azul & Mochkil MUD Sandbox – Godville Mode</title>
 
 <style>
-  body {
-    background: #0a0a23;
-    color: #00ffff;
-    font-family: monospace;
-    margin: 0;
-    padding: 0;
-    text-shadow: 0 0 6px #00ffff, 0 0 12px #00ffff;
-  }
+body {
+  background: #0a0a23;
+  color: #00ffff;
+  font-family: monospace;
+  margin: 0;
+  padding: 0;
+  text-shadow: 0 0 6px #00ffff, 0 0 12px #00ffff;
+}
 
-  .container {
-    max-width: 420px;
-    margin: auto;
-    padding: 12px 12px 80px 12px;
-    position: relative;
-  }
+.container {
+  max-width: 420px;
+  margin: auto;
+  padding: 12px 12px 80px 12px;
+  position: relative;
+}
 
-  h1 {
-    margin-top: 80px;
-    text-align: center;
-    color: #ffcc00;
-    text-shadow: 0 0 6px #ffcc00, 0 0 12px #ffcc00, 0 0 20px #ffdd33;
-  }
+h1 {
+  margin-top: 80px;
+  text-align: center;
+  color: #ffcc00;
+  text-shadow: 0 0 6px #ffcc00, 0 0 12px #ffcc00, 0 0 20px #ffdd33;
+}
 
-  #story {
-    min-height: 140px;
-    margin: 10px 0;
-    position: relative;
-    z-index: 10;
-    color: #00ffff;
-    text-shadow: 0 0 4px #00ffff, 0 0 8px #00ffff;
-  }
+#story {
+  min-height: 140px;
+  margin: 10px 0;
+  position: relative;
+  z-index: 10;
+  color: #00ffff;
+  text-shadow: 0 0 4px #00ffff, 0 0 8px #00ffff;
+}
 
-  #loading, #dice {
-    color: #ff66cc;
-    text-shadow: 0 0 6px #ff66cc, 0 0 12px #ff66cc;
-  }
+#loading, #dice {
+  color: #ff66cc;
+  text-shadow: 0 0 6px #ff66cc, 0 0 12px #ff66cc;
+}
 
-  #actions button {
-    display: block;
-    width: 100%;
-    margin: 4px 0;
-    padding: 10px;
-    font-size: 1.1em;
-    background: #111144;
-    color: #fff;
-    border: 1px solid #00ffff;
-    border-radius: 4px;
-    text-shadow: 0 0 2px #00ffff;
-  }
+#actions button {
+  display: block;
+  width: 100%;
+  margin: 4px 0;
+  padding: 10px;
+  font-size: 1.1em;
+  background: #111144;
+  color: #fff;
+  border: 1px solid #00ffff;
+  border-radius: 4px;
+  text-shadow: 0 0 2px #00ffff;
+}
 
-  #actions button:hover {
-    background: #3333aa;
-    box-shadow: 0 0 12px #00ffff;
-  }
+#actions button:hover {
+  background: #3333aa;
+  box-shadow: 0 0 12px #00ffff;
+}
 
-  #inventory {
-    margin-top: 8px;
-    position: relative;
-    z-index: 20;
-    color: #ffcc66;
-    text-shadow: 0 0 6px #ffcc66, 0 0 12px #ffcc66;
-  }
+#inventory {
+  margin-top: 8px;
+  position: relative;
+  z-index: 20;
+  color: #ffcc66;
+  text-shadow: 0 0 6px #ffcc66, 0 0 12px #ffcc66;
+}
 
-  #inputRow {
-    display: flex;
-    gap: 6px;
-    margin-top: 10px;
-    position: relative;
-    z-index: 20;
-  }
+#inputRow {
+  display: flex;
+  gap: 6px;
+  margin-top: 10px;
+  position: relative;
+  z-index: 20;
+}
 
-  #inputRow input {
-    flex: 1;
-    padding: 8px;
-    font-size: 1em;
-    background: #111133;
-    color: #00ffff;
-    border: 1px solid #00ffff;
-    border-radius: 4px;
-  }
+#inputRow input {
+  flex: 1;
+  padding: 8px;
+  font-size: 1em;
+  background: #111133;
+  color: #00ffff;
+  border: 1px solid #00ffff;
+  border-radius: 4px;
+}
 
-  #inputRow button {
-    background: #333366;
-    color: #fff;
-    border: 1px solid #00ffff;
-    border-radius: 4px;
-    padding: 8px 12px;
-    font-size: 1em;
-  }
+#inputRow button {
+  background: #333366;
+  color: #fff;
+  border: 1px solid #00ffff;
+  border-radius: 4px;
+  padding: 8px 12px;
+  font-size: 1em;
+}
 
-  img.sprite {
-    position: absolute;
-    width: 64px;
-    image-rendering: pixelated;
-    z-index: 5;
-    transition: all 0.3s ease;
-  }
+img.sprite {
+  position: absolute;
+  width: 64px;
+  image-rendering: pixelated;
+  z-index: 5;
+  transition: all 0.3s ease;
+}
 
-  #azul { top: 10px; left: 10px; animation: glow 2s infinite; }
-  #mochkil { bottom: 20px; right: 10px; animation: glow 2s infinite alternate; }
+#azul { top: 10px; left: 10px; animation: glow 2s infinite; }
+#mochkil { bottom: 20px; right: 10px; animation: glow 2s infinite alternate; }
 
-  @keyframes glow {
-    0%, 100% { filter: drop-shadow(0 0 4px #00ffff); }
-    50% { filter: drop-shadow(0 0 12px #00ffff); }
-  }
+@keyframes glow {
+  0%, 100% { filter: drop-shadow(0 0 4px #00ffff); }
+  50% { filter: drop-shadow(0 0 12px #00ffff); }
+}
 </style>
 </head>
 
@@ -119,7 +119,7 @@
   <img id="azul" class="sprite" src="https://raw.githubusercontent.com/MaximumReality/azul-story-cyoa-sandbox/main/azul.png">
   <img id="mochkil" class="sprite" src="https://raw.githubusercontent.com/MaximumReality/azul-story-cyoa-sandbox/main/mochkil.png">
 
-  <h1>Azul & Mochkil MUD Sandbox</h1>
+  <h1>Azul & Mochkil MUD Sandbox – Godville Mode</h1>
 
   <div id="story"></div>
   <div id="loading">💾 Reading adventure from disk...</div>
@@ -222,24 +222,48 @@ function renderRoom(){
 // ===== Mochkil Mischief =====
 function mochkilChaos() {
   if(Math.random() < 0.4 && !typing) {
-    typeWriter("Mochkil is being naughty!", ()=>{
-      const containerWidth = document.querySelector('.container').clientWidth;
-      const containerHeight = 350;
+    const containerWidth = document.querySelector('.container').clientWidth;
+    const containerHeight = 350;
+    const x = Math.random() * (containerWidth - 64);
+    const y = Math.random() * (containerHeight - 64);
 
-      const x = Math.random() * (containerWidth - 64);
-      const y = Math.random() * (containerHeight - 64);
-
-      mochkilEl.style.left = x + 'px';
-      mochkilEl.style.top = y + 'px';
-      
-      if(Math.random() < 0.5 && actionsEl.children.length > 1){
-        for(let i = actionsEl.children.length; i >= 0; i--){
-          actionsEl.appendChild(actionsEl.children[Math.floor(Math.random()*i)]);
-        }
+    mochkilEl.style.left = x + 'px';
+    mochkilEl.style.top = y + 'px';
+    
+    if(Math.random() < 0.5 && actionsEl.children.length > 1){
+      for(let i = actionsEl.children.length; i >= 0; i--){
+        actionsEl.appendChild(actionsEl.children[Math.floor(Math.random() * i)]);
       }
-    });
+    }
+    
+    const chaosMessages = [
+      "Mochkil is plotting something...",
+      "Mochkil looks bored. Very bored.",
+      "Mochkil sits on a button. Oops!",
+      "Azul rolls eyes at Mochkil's antics."
+    ];
+    
+    typeWriter(chaosMessages[Math.floor(Math.random()*chaosMessages.length)]);
   }
 }
+
+// ===== Random Godville-style Comments =====
+const randomComments = [
+  "Mochkil glares at you. 'Really? THAT again?'",
+  "Azul floats by: 'Are you even trying?'",
+  "A floating test tube rolls past. 'Oops! Watch out!'",
+  "Mochkil whispers: 'I hide your cookies. Forever.'",
+  "Azul giggles: 'This potion smells like old cheese!'"
+];
+
+function randomNPCComment() {
+  if(Math.random() < 0.3 && !typing){
+    const comment = randomComments[Math.floor(Math.random() * randomComments.length)];
+    typeWriter(comment);
+  }
+}
+
+setInterval(randomNPCComment, 7000);
 
 // ===== Actions =====
 function handleAction(action){
@@ -284,11 +308,9 @@ function handleAction(action){
       "Azul whispers: 'Try turning it off and on.'",
       "A tiny goblin pops out and says: 'Socks are better than shoes!'"
     ];
-    const joke = jokes[Math.floor(Math.random()*jokes.length)];
-    typeWriter(joke, mochkilChaos);
+    typeWriter(jokes[Math.floor(Math.random()*jokes.length)], mochkilChaos);
     return;
   }
-
   if(action.includes("Search for spell scroll") && currentRoom==='library'){
     inventory.push("spell scroll");
     updateInventory();
