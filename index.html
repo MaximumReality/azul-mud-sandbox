@@ -143,32 +143,53 @@ function handleAction(action){
   }
 
 
-  // 2. QUEST: GIVE COOKIE
+    // --- QUEST: GIVE COOKIE ---
   if(input.includes("give cookie")){
     if(inventory.includes("cookie") && currentRoom === 'pantry'){
       inventory = inventory.filter(i => i !== "cookie"); updateInventory();
-      typeWriter("Mochkil eats the cookie and moves aside! 'Forest open!'", renderActions);
+      typeWriter("Mochkil eats the cookie and moves aside! 'The Forest path is open!'", () => {
+        if(!rooms.courtyard.actions.includes("Go to Forest")) rooms.courtyard.actions.push("Go to Forest");
+        renderActions();
+      });
     } else { typeWriter("Mochkil hisses: 'No cookie, no forest!'", renderActions); }
     return;
   }
 
-  // 3. ITEM LOGIC
-  if(input.includes("take cookie")){ inventory.push("cookie"); updateInventory(); typeWriter("You got a cookie!", renderActions); return; }
-  if(input.includes("take sparkling elixir")){ inventory.push("sparkling elixir"); updateInventory(); typeWriter("You got the elixir!", renderActions); return; }
-    if(input.includes("search for ghost broom") && currentRoom === 'forest'){
-    typeWriter("You reach into a glitching shadow... You found the Ghost Broom!", () => {
-      inventory.push("Ghost Broom");
-      updateInventory();
-      // Remove the search button so you can't find it twice
+  // --- FOREST & TRADING ---
+  if(input.includes("search for ghost broom") && currentRoom === 'forest'){
+    typeWriter("Scanning... GHOST_BROOM.obj found in the glitching shadows!", () => {
+      inventory.push("Ghost Broom"); updateInventory();
       rooms.forest.actions = rooms.forest.actions.filter(a => a !== "Search for Ghost Broom");
-      // Add the Use button
       rooms.forest.actions.push("Use Ghost Broom");
       renderActions();
     });
     return;
   }
 
-  // 4. NAVIGATION
+  if(input.includes("trade mushroom") && currentRoom === 'forest'){
+    if(inventory.includes("glowing mushroom")){
+      inventory = inventory.filter(i => i !== "glowing mushroom");
+      inventory.push("Azul-o's box"); updateInventory();
+      typeWriter("The Squirrel swaps your mushroom for a box of Azul-o's! 🍫", renderActions);
+    } else { typeWriter("The Squirrel chatters: 'No mushroom, no trade!'", renderActions); }
+    return;
+  }
+
+  if(input.includes("use ghost broom")){
+    typeWriter("The broom glows neon pink. Reality glitches... Teleporting to the Vault.", () => {
+      currentRoom = 'vault';
+      document.body.classList.add('vault-active'); // Triggers the glitch flicker
+      renderRoom();
+    });
+    return;
+  }
+
+  // --- ITEM LOGIC ---
+  if(input.includes("take cookie")){ inventory.push("cookie"); updateInventory(); typeWriter("You grabbed a cookie!", renderActions); return; }
+  if(input.includes("take sparkling elixir")){ inventory.push("sparkling elixir"); updateInventory(); typeWriter("You grabbed the elixir!", renderActions); return; }
+  if(input.includes("pick a mushroom")){ inventory.push("glowing mushroom"); updateInventory(); typeWriter("You picked a glowing mushroom.", renderActions); return; }
+
+  // --- NAVIGATION ---
   const destinations = ["lab", "pantry", "chamber", "library", "courtyard", "forest", "vault"];
   let found = destinations.find(d => input.includes(d));
   if(found){
@@ -177,8 +198,9 @@ function handleAction(action){
     renderRoom(); return;
   }
 
-  // 5. FALLBACK
+  // --- FALLBACK ---
   typeWriter(`You attempt to ${action}. Reality flickers.`, renderActions);
+
 }
 
 // --- BOOT ---
