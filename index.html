@@ -366,6 +366,31 @@ sendBtn.onclick=()=>{ const v=userInput.value.trim(); if(v) handleAction(v); use
 
 // ===== Init =====
 renderRoom(); updateInventory();
+  function startPotatoRain() {
+  const count = 30; // Number of potatoes
+  for (let i = 0; i < count; i++) {
+    setTimeout(() => {
+      const p = document.createElement('div');
+      p.textContent = '🥔';
+      p.style.position = 'fixed';
+      p.style.top = '-50px';
+      p.style.left = Math.random() * 100 + 'vw';
+      p.style.fontSize = Math.random() * 20 + 20 + 'px';
+      p.style.zIndex = '1000';
+      p.style.pointerEvents = 'none';
+      p.style.transition = `transform ${Math.random() * 2 + 2}s linear, opacity 2s`;
+      
+      document.body.appendChild(p);
+
+      // Animate falling
+      setTimeout(() => {
+        p.style.transform = `translateY(${window.innerHeight + 100}px) rotate(${Math.random() * 360}deg)`;
+        setTimeout(() => p.remove(), 3000);
+      }, 100);
+    }, i * 100);
+  }
+}
+
 </script>
 </body>
 </html>
