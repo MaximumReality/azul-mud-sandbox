@@ -74,7 +74,7 @@ img.sprite { position: absolute; width: 64px; image-rendering: pixelated; z-inde
 <script>
 // ===== Adventure Rooms =====
 const rooms = {
-  lab: { description: "You are in the Glowing Lab. Test tubes bubble, strange liquids float mid-air.", actions:["Inspect test tubes","Go to Secret Pantry","Search glowing bookshelf","Go to Library","Go to Courtyard"] },
+  lab: { description: "You are in the Glowing Lab. Test tubes bubble, strange liquids float mid-air.", actions:["Inspect test tubes","Give elixir to Azul","Search glowing bookshelf","Go to Library","Go to Courtyard"] },
   pantry: { description: "You are in the Secret Pantry. Mochkil is blocking the exit to the Forest, looking hungry.", actions:["Take cookie","Give cookie to Mochkil","Return to Lab"] },
   potionChamber: { description: "A hidden chamber filled with glowing potions.", actions:["Take sparkling elixir","Return to Lab","Drink random potion"] },
   library: { description: "Endless shelves of dusty books, some levitating mysteriously.", actions:["Read a book","Search for spell scroll","Return to Lab"] },
@@ -257,6 +257,23 @@ function handleAction(action){
     return;
   }
 
+  // AZUL'S DIAGNOSTIC
+  if(action.includes("Give elixir to Azul") && currentRoom === 'lab'){
+    if(inventory.includes("sparkling elixir")){
+      inventory = inventory.filter(i => i !== "sparkling elixir");
+      updateInventory();
+      typeWriter("Azul drinks the elixir. His eyes glow neon blue! 'I see it now... the Ghost Broom is hidden in the Forest shadows.'", () => {
+        // TRIGGER: Reveal the hidden command in the Forest
+        if (!rooms.forest.actions.includes("Search for Ghost Broom")) {
+           rooms.forest.actions.push("Search for Ghost Broom");
+        }
+        typeWriter("SYSTEM: Quest Data Updated: Forest Scan Available.");
+      });
+    } else {
+      typeWriter("Azul sighs. 'My sensors are low. I need that Sparkling Elixir from the bookshelf chamber.'");
+    }
+    return;
+  }
 
   // THE COOKIE TRADE
   if(action.includes("Give cookie to Mochkil") && currentRoom === 'pantry'){
@@ -288,7 +305,7 @@ function handleAction(action){
 }
 
 // ===== Inventory =====
-function updateInventory(){ inventoryEl.textContent="Inventory: "+(inventory.length?inventory.join(', '):'None'); }
+function updateInventory(){ inventoryEl.innerHTML = "🎒 <span style='color:#00ffff'>DATA_PACKETS:</span> " + (inventory.length ? inventory.join(' | ') : 'EMPTY'); }
 
 // ===== Input =====
 sendBtn.onclick=()=>{ const v=userInput.value.trim(); if(v) handleAction(v); userInput.value=''; };
