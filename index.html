@@ -333,6 +333,12 @@ function handleAction(action){
     });
     return;
   }
+  // POTION CHAMBER ENTRANCE
+  if(input === "go to potion chamber"){
+    currentRoom = 'potionChamber';
+    renderRoom();
+    return;
+  }
 
     // ROOM NAVIGATION PATTERN
   const roomKeys = Object.keys(rooms);
