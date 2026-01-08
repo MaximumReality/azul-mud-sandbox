@@ -329,19 +329,24 @@ function handleAction(action){
   if(input === "enter_mainframe"){ window.location.href = "https://maximumreality.xyz"; return; }
   if(input === "visit_youtube"){ window.location.href = "https://youtube.com/@maximumrealitylori"; return; }
   
-    // THE VAULT INTERACTION
+      // THE VAULT INTERACTION
   if(input === "watch doom loop"){
     typeWriter("POTATO_OVERLOAD: The screens pulse with starchy chaos. The loop is eternal.", () => {
        document.body.style.background = "radial-gradient(circle, #ff00ff, #0a0a23)";
+       startPotatoRain(); // <--- THE POTATOES ARE NOW LIVE!
     });
     return;
   }
-  // POTION CHAMBER ENTRANCE
+
+  
+    // POTION CHAMBER ENTRANCE
   if(input === "go to potion chamber"){
     currentRoom = 'potionChamber';
     renderRoom();
+    renderActions(); // Forces the buttons to update instantly
     return;
   }
+
 
     // ROOM NAVIGATION PATTERN
   const roomKeys = Object.keys(rooms);
