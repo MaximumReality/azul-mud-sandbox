@@ -125,14 +125,23 @@ function handleAction(action){
   const input = action.toLowerCase();
   actionsEl.innerHTML = ''; 
 
-  // 1. QUEST: GIVE ELIXIR
-  if(input.includes("give elixir")){
+    if(input.includes("give elixir")){
     if(inventory.includes("sparkling elixir") && currentRoom === 'lab'){
-      inventory = inventory.filter(i => i !== "sparkling elixir"); updateInventory();
-      typeWriter("Azul drinks. 'Power restored! The Forest is scanned.'", renderActions);
-    } else { typeWriter("Azul needs the elixir first.", renderActions); }
+      inventory = inventory.filter(i => i !== "sparkling elixir"); 
+      updateInventory();
+      typeWriter("Azul's eyes glow neon. 'SCAN_COMPLETE. I've revealed the Ghost Broom in the Forest shadows.'", () => {
+        // This is the "Magic" line that adds the button to the Forest room!
+        if(!rooms.forest.actions.includes("Search for Ghost Broom")) {
+          rooms.forest.actions.push("Search for Ghost Broom");
+        }
+        renderActions();
+      });
+    } else { 
+      typeWriter("Azul adjusts his goggles. 'I cannot scan without the elixir.'", renderActions); 
+    }
     return;
   }
+
 
   // 2. QUEST: GIVE COOKIE
   if(input.includes("give cookie")){
@@ -146,6 +155,18 @@ function handleAction(action){
   // 3. ITEM LOGIC
   if(input.includes("take cookie")){ inventory.push("cookie"); updateInventory(); typeWriter("You got a cookie!", renderActions); return; }
   if(input.includes("take sparkling elixir")){ inventory.push("sparkling elixir"); updateInventory(); typeWriter("You got the elixir!", renderActions); return; }
+    if(input.includes("search for ghost broom") && currentRoom === 'forest'){
+    typeWriter("You reach into a glitching shadow... You found the Ghost Broom!", () => {
+      inventory.push("Ghost Broom");
+      updateInventory();
+      // Remove the search button so you can't find it twice
+      rooms.forest.actions = rooms.forest.actions.filter(a => a !== "Search for Ghost Broom");
+      // Add the Use button
+      rooms.forest.actions.push("Use Ghost Broom");
+      renderActions();
+    });
+    return;
+  }
 
   // 4. NAVIGATION
   const destinations = ["lab", "pantry", "chamber", "library", "courtyard", "forest", "vault"];
