@@ -75,12 +75,17 @@ img.sprite { position: absolute; width: 64px; image-rendering: pixelated; z-inde
 // ===== Adventure Rooms =====
 const rooms = {
   lab: { description: "You are in the Glowing Lab. Test tubes bubble, strange liquids float mid-air.", actions:["Inspect test tubes","Go to Secret Pantry","Search glowing bookshelf","Go to Library","Go to Courtyard"] },
-  pantry: { description: "You are in the Secret Pantry. Shelves overflow with cookies.", actions:["Take cookie","Return to Lab","Peek behind crates"] },
+  pantry: { description: "You are in the Secret Pantry. Mochkil is blocking the exit to the Forest, looking hungry.", actions:["Take cookie","Give cookie to Mochkil","Return to Lab"] },
   potionChamber: { description: "A hidden chamber filled with glowing potions.", actions:["Take sparkling elixir","Return to Lab","Drink random potion"] },
   library: { description: "Endless shelves of dusty books, some levitating mysteriously.", actions:["Read a book","Search for spell scroll","Return to Lab"] },
   courtyard: { description: "A small courtyard with a fountain and glowing mushrooms.", actions:["Pick a mushroom","Throw coin in fountain","Go to Forest","Return to Lab"] },
   attic: { description: "A dark dusty attic. You hear squeaks.", actions:["Search boxes","Chase mouse","Return to Lab"] },
-  forest: { description: "You step into a mysterious forest. Trees glow faintly, mushrooms sprout in strange patterns, and the wind whispers secrets.", actions:["Pick glowing mushroom","Talk to squirrel","Explore deeper","Trade mushroom","Return to Courtyard"] }
+  forest: { description: "You step into a mysterious forest. Trees glow faintly, mushrooms sprout in strange patterns, and the wind whispers secrets.", actions:["Pick glowing mushroom","Talk to squirrel","Explore deeper","Trade mushroom","Return to Courtyard"] },
+    vault: { 
+    description: "RECOVERY_COMPLETE. You have entered the heart of the Mainframe. The Doom Loop is playing on every screen.", 
+    actions:["Watch Doom Loop", "Return to Lab"] 
+  }
+
 };
 
 let currentRoom = 'lab';
@@ -230,6 +235,42 @@ function handleAction(action){
       typeWriter("You trade a glowing mushroom and receive a box of Azul-o’s! Mochkil eyes it hungrily. 🍫", mochkilChaos);
     } else {
       typeWriter("You have nothing to trade. The squirrel looks disappointed.", mochkilChaos);
+    }
+    return;
+  }
+    // SEARCH FOR BROOM LOGIC
+  if(action.includes("Search for Ghost Broom") && currentRoom === 'forest'){
+    typeWriter("Scanning forest floor... GHOST_BROOM.obj detected!", () => {
+      inventory.push("Ghost Broom");
+      updateInventory();
+      // After finding it, the 'Teleport' action becomes available
+      rooms.forest.actions.push("Use Ghost Broom");
+      renderActions();
+    });
+    return;
+  }
+    if(action.includes("Use Ghost Broom")){
+    typeWriter("The broom glows pink. Reality glitches... Teleporting to Vault.", () => {
+      currentRoom = 'vault';
+      renderRoom();
+    });
+    return;
+  }
+
+
+  // THE COOKIE TRADE
+  if(action.includes("Give cookie to Mochkil") && currentRoom === 'pantry'){
+    if(inventory.includes("cookie")){
+      inventory = inventory.filter(i => i !== "cookie");
+      updateInventory();
+      typeWriter("Mochkil purrs loudly and moves aside. 'The Forest path is open, human!'", () => {
+        // UNLOCK THE PATH: Add Forest to the Lab or Courtyard actions
+        rooms.courtyard.actions.push("Go to Forest");
+        typeWriter("SYSTEM: Forest Access Granted.");
+        mochkilChaos();
+      });
+    } else {
+      typeWriter("Mochkil hisses. 'No cookie, no Forest. Those are the rules.'");
     }
     return;
   }
