@@ -68,210 +68,99 @@
     <button id="sendBtn">Send</button>
   </div>
 </div>
-
 <script>
-const rooms = {
-  lab: { 
-    description: "You are in the Glowing Lab. Test tubes bubble with quantum foam.", 
-    actions:["Inspect test tubes","Give elixir to Azul","Go to Library","Go to Courtyard", "Go to Pantry"] 
-  },
-  pantry: { 
-    description: "The Secret Pantry. Chef Mochkil is guarding the exit to the Forest.", 
-    actions:["Take cookie","Give cookie to Mochkil","Return to Lab"] 
-  },
-  potionChamber: { 
-    description: "A hidden chamber filled with glowing potions.", 
-    actions:["Take sparkling elixir","Return to Lab"] 
-  },
-  library: { 
-    description: "Endless shelves of dusty books, some levitating mysteriously.", 
-    actions:["Read a book","Search for spell scroll","Go to Potion Chamber","Return to Lab"] 
-  },
-  courtyard: { 
-    description: "A courtyard with a fountain. You can smell the distant Forest.", 
-    actions:["Pick a mushroom","Throw coin in fountain","Return to Lab"] 
-  },
-  forest: { 
-    description: "The Mysterious Forest. The trees whisper binary secrets.", 
-    actions:["Pick glowing mushroom","Talk to squirrel","Explore deeper","Trade mushroom","Return to Courtyard"] 
-  },
-  vault: { 
-    description: "MAINFRAME_HEART. The Doom Loop is playing on every screen.", 
-    actions:["Watch Doom Loop", "RESTART_SIMULATION", "ENTER_MAINFRAME"] 
-  }
-};
+// --- STATE ---
 let currentRoom = 'lab';
 let inventory = [];
 let typing = false;
 
+// --- DOM ELEMENTS ---
 const storyEl = document.getElementById('story');
 const actionsEl = document.getElementById('actions');
 const inventoryEl = document.getElementById('inventory');
-const userInput = document.getElementById('userInput');
-const sendBtn = document.getElementById('sendBtn');
 const loadingEl = document.getElementById('loading');
 
-const npcs = {
-  azul: { name: "Dr. Azul", location: "lab", dialogue: "Azul adjusts his goggles. 'Quantum fibers are stable.'" },
-  mochkil: { name: "Chef Mochkil", location: "pantry", dialogue: "Mochkil licks a wooden spoon. 'Cookies are currency!'" },
-  squirrel: { name: "Forest Squirrel", location: "forest", dialogue: "The squirrel chitters: 'The Ghost Broom is hidden!'" }
+// --- ROOMS DATA ---
+const rooms = {
+  lab: { description: "You are in the Glowing Lab. Test tubes bubble with quantum foam.", actions:["Inspect test tubes","Give elixir to Azul","Go to Library","Go to Courtyard", "Go to Pantry"] },
+  pantry: { description: "The Secret Pantry. Chef Mochkil is guarding the exit to the Forest.", actions:["Take cookie","Give cookie to Mochkil","Return to Lab"] },
+  potionChamber: { description: "A hidden chamber filled with glowing potions.", actions:["Take sparkling elixir","Return to Lab"] },
+  library: { description: "Endless shelves of dusty books.", actions:["Read a book","Go to Potion Chamber","Return to Lab"] },
+  courtyard: { description: "A courtyard with a fountain.", actions:["Pick a mushroom","Go to Forest","Return to Lab"] },
+  forest: { description: "The Mysterious Forest.", actions:["Pick glowing mushroom","Talk to squirrel","Trade mushroom","Return to Courtyard"] },
+  vault: { description: "MAINFRAME_HEART.", actions:["RESTART_SIMULATION"] }
 };
 
-// --- Core Helper Functions ---
-function showLoading(cb){ 
-  loadingEl.style.display='block'; 
-  setTimeout(()=>{ loadingEl.style.display='none'; if(cb) cb(); }, 400); 
-}
-
+// --- CORE FUNCTIONS ---
 function typeWriter(text, cb){ 
-  if(typing) return; 
-  typing = true; 
-  storyEl.textContent = ''; 
-  let i = 0; 
+  if(typing) return; typing = true; storyEl.textContent = ''; let i = 0; 
   (function step(){ 
-    if(i < text.length){ 
-      storyEl.textContent += text[i++]; 
-      setTimeout(step, 25); 
-    } else { 
-      typing = false; 
-      if(cb) cb(); 
-    } 
+    if(i < text.length){ storyEl.textContent += text[i++]; setTimeout(step, 25); } 
+    else { typing = false; if(cb) cb(); } 
   })(); 
 }
 
-// --- Rendering functions ---
-function updateInventory(){ 
-  inventoryEl.innerHTML = "🎒 <span style='color:#00ffff'>DATA_PACKETS:</span> " + 
-    (inventory.length ? inventory.join(' | ') : 'EMPTY'); 
-}
+function updateInventory(){ inventoryEl.innerHTML = "🎒 DATA_PACKETS: " + (inventory.length ? inventory.join(' | ') : 'EMPTY'); }
 
 function renderActions(){ 
   actionsEl.innerHTML = ''; 
   rooms[currentRoom].actions.forEach(a => { 
-    const b = document.createElement('button'); 
-    b.textContent = a; 
-    b.onclick = () => handleAction(a); 
-    actionsEl.appendChild(b); 
+    const b = document.createElement('button'); b.textContent = a; 
+    b.onclick = () => handleAction(a); actionsEl.appendChild(b); 
   }); 
 }
 
 function renderRoom(){ 
-  actionsEl.innerHTML = ''; // Prevent double-clicks
-  showLoading(() => { 
-    typeWriter(rooms[currentRoom].description, () => { 
-      renderActions();
-      // Manage Sprite Visibility
-      document.getElementById('azul').style.display = (npcs.azul.location === currentRoom) ? "block" : "none";
-      document.getElementById('mochkil').style.display = (npcs.mochkil.location === currentRoom) ? "block" : "none";
-    }); 
+  actionsEl.innerHTML = '';
+  typeWriter(rooms[currentRoom].description, () => { 
+    renderActions();
+    document.getElementById('azul').style.display = (currentRoom === 'lab') ? "block" : "none";
+    document.getElementById('mochkil').style.display = (currentRoom === 'pantry') ? "block" : "none";
   }); 
 }
+
+// --- THE ACTION ENGINE ---
 function handleAction(action){
   if(typing) return;
   const input = action.toLowerCase();
   actionsEl.innerHTML = ''; 
 
-  // --- QUEST: GIVE ELIXIR TO AZUL ---
-  if(input.includes("give elixir") || input.includes("give sparkling elixir")){
+  // 1. QUEST: GIVE ELIXIR
+  if(input.includes("give elixir")){
     if(inventory.includes("sparkling elixir") && currentRoom === 'lab'){
-      inventory = inventory.filter(i => i !== "sparkling elixir");
-      updateInventory();
-      typeWriter("Azul drinks. 'Power restored! I sense a Ghost Broom in the Forest.'", () => {
-        if(!rooms.forest.actions.includes("Search for Ghost Broom")) {
-          rooms.forest.actions.push("Search for Ghost Broom");
-        }
-        renderActions();
-      });
-    } else {
-      typeWriter("Azul sighs. 'I need that sparkling elixir from the potion chamber...'", renderActions);
-    }
+      inventory = inventory.filter(i => i !== "sparkling elixir"); updateInventory();
+      typeWriter("Azul drinks. 'Power restored! The Forest is scanned.'", renderActions);
+    } else { typeWriter("Azul needs the elixir first.", renderActions); }
     return;
   }
 
-  // --- ITEM LOGIC ---
-  if(input.includes("take cookie")){
-    if(!inventory.includes("cookie")){
-      inventory.push("cookie"); updateInventory();
-      typeWriter("You grab a cookie. Mochkil purrs!", renderActions);
-    } else { typeWriter("You already have a cookie.", renderActions); }
-    return;
-  }
-  if(input.includes("take sparkling elixir")){
-    if(!inventory.includes("sparkling elixir")){
-      inventory.push("sparkling elixir"); updateInventory();
-      typeWriter("You grab the elixir. It hums with power.", renderActions);
-    } else { typeWriter("You already have the elixir.", renderActions); }
+  // 2. QUEST: GIVE COOKIE
+  if(input.includes("give cookie")){
+    if(inventory.includes("cookie") && currentRoom === 'pantry'){
+      inventory = inventory.filter(i => i !== "cookie"); updateInventory();
+      typeWriter("Mochkil eats the cookie and moves aside! 'Forest open!'", renderActions);
+    } else { typeWriter("Mochkil hisses: 'No cookie, no forest!'", renderActions); }
     return;
   }
 
-  // --- ROOM NAVIGATION ---
-  if(input.includes("potion") || input.includes("chamber")) { currentRoom = 'potionChamber'; renderRoom(); return; }
-  if(input.includes("lab")) { currentRoom = 'lab'; renderRoom(); return; }
-  if(input.includes("pantry")) { currentRoom = 'pantry'; renderRoom(); return; }
-  if(input.includes("library")) { currentRoom = 'library'; renderRoom(); return; }
-  if(input.includes("courtyard")) { currentRoom = 'courtyard'; renderRoom(); return; }
-  if(input.includes("forest")) { currentRoom = 'forest'; renderRoom(); return; }
-  if(input.includes("vault")) { currentRoom = 'vault'; renderRoom(); return; }
+  // 3. ITEM LOGIC
+  if(input.includes("take cookie")){ inventory.push("cookie"); updateInventory(); typeWriter("You got a cookie!", renderActions); return; }
+  if(input.includes("take sparkling elixir")){ inventory.push("sparkling elixir"); updateInventory(); typeWriter("You got the elixir!", renderActions); return; }
 
-  // --- FALLBACK ---
-  typeWriter(`You attempt to ${action}. The simulation remains stable.`, renderActions);
-}
-
-
-// --- Dice & Randomizers ---
-function rollDice(){ return Math.floor(Math.random()*6)+1; }
-
-const diceEl = document.getElementById('dice');
-diceEl.onclick = () => {
-  if(typing) return;
-  const roll = rollDice();
-  typeWriter(`🎲 DATA_RECOVERY: Rolled ${roll}. Re-syncing UI...`, renderActions);
-  if(roll === 6) {
-    typeWriter("🎲 CRITICAL HIT! Mochkil triggers a Snack Attack!", startPotatoRain);
+  // 4. NAVIGATION
+  const destinations = ["lab", "pantry", "chamber", "library", "courtyard", "forest", "vault"];
+  let found = destinations.find(d => input.includes(d));
+  if(found){
+    if(found === "chamber") currentRoom = 'potionChamber';
+    else currentRoom = found;
+    renderRoom(); return;
   }
-};
 
-// --- Special Effects ---
-function startPotatoRain() {
-  const count = 25;
-  for (let i = 0; i < count; i++) {
-    setTimeout(() => {
-      const p = document.createElement('div');
-      p.textContent = '🥔';
-      p.style.cssText = `position:fixed; top:-50px; left:${Math.random()*100}vw; font-size:24px; z-index:1000; pointer-events:none; transition: transform 2s linear;`;
-      document.body.appendChild(p);
-      setTimeout(() => {
-        p.style.transform = `translateY(${window.innerHeight + 100}px) rotate(360deg)`;
-        setTimeout(() => p.remove(), 2500);
-      }, 100);
-    }, i * 150);
-  }
+  // 5. FALLBACK
+  typeWriter(`You attempt to ${action}. Reality flickers.`, renderActions);
 }
 
-// --- Specific Action Overrides ---
-// (Add these to the end of handleAction logic if needed)
-if(input === "watch doom loop") {
-  typeWriter("The screens pulse. The starch is eternal.", () => {
-    document.body.style.background = "radial-gradient(circle, #ff00ff, #0a0a23)";
-    startPotatoRain();
-  });
-}
-
-if(input === "restart_simulation") location.reload();
-if(input === "enter_mainframe") window.location.href = "https://maximumreality.xyz";
-
-// --- Input Handling ---
-sendBtn.onclick = () => {
-  const v = userInput.value.trim();
-  if(v) handleAction(v);
-  userInput.value = '';
-};
-
-userInput.addEventListener("keypress", (e) => {
-  if (e.key === "Enter") sendBtn.click();
-});
-
-// --- Boot Sequence ---
+// --- BOOT ---
 updateInventory();
 renderRoom();
 </script>
