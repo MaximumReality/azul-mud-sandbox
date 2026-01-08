@@ -221,7 +221,14 @@ setInterval(mochkilSteal,12000);
 
 // ===== Actions =====
 function handleAction(action){
+  if(typing) return; // <--- THIS IS THE KEY! It stops the "Double Command" 
+  
   const input = action.toLowerCase();
+  
+  // Immediately clear buttons on click so the UI stays clean
+  actionsEl.innerHTML = ''; 
+
+  // ... rest of your NPC logic ...
 
   // NPC INTERACTION PATTERN
   if(input.startsWith("talk to ")){
@@ -404,6 +411,17 @@ updateInventory();
     }, i * 100);
   }
 }
+const diceEl = document.getElementById('dice');
+diceEl.style.cursor = "pointer"; // Makes it tappable on iPhone
+
+diceEl.onclick = () => {
+  if(typing) return;
+  const roll = rollDice();
+  typeWriter(`🎲 DATA_RECOVERY: You rolled a ${roll}. Re-initializing room interface...`, () => {
+    renderActions(); // Forces buttons to reappear!
+    if(roll === 6) typeWriter("Mochkil purrs: 'I found your buttons! They were under the virtual rug.'");
+  });
+};
 
 </script>
 </body>
