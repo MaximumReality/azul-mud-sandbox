@@ -169,29 +169,43 @@ function renderRoom(){
 function handleAction(action){
   if(typing) return;
   const input = action.toLowerCase();
-  
-  // 1. CLEAR the UI immediately
   actionsEl.innerHTML = ''; 
+
+  // --- QUEST: GIVE ELIXIR TO AZUL ---
+  if(input.includes("give elixir") || input.includes("give sparkling elixir")){
+    if(inventory.includes("sparkling elixir") && currentRoom === 'lab'){
+      inventory = inventory.filter(i => i !== "sparkling elixir");
+      updateInventory();
+      typeWriter("Azul drinks. 'Power restored! I sense a Ghost Broom in the Forest.'", () => {
+        if(!rooms.forest.actions.includes("Search for Ghost Broom")) {
+          rooms.forest.actions.push("Search for Ghost Broom");
+        }
+        renderActions();
+      });
+    } else {
+      typeWriter("Azul sighs. 'I need that sparkling elixir from the potion chamber...'", renderActions);
+    }
+    return;
+  }
 
   // --- ITEM LOGIC ---
   if(input.includes("take cookie")){
-    inventory.push("cookie"); updateInventory();
-    typeWriter("You grab a cookie. Mochkil purrs!", renderActions);
+    if(!inventory.includes("cookie")){
+      inventory.push("cookie"); updateInventory();
+      typeWriter("You grab a cookie. Mochkil purrs!", renderActions);
+    } else { typeWriter("You already have a cookie.", renderActions); }
     return;
   }
   if(input.includes("take sparkling elixir")){
-    inventory.push("sparkling elixir"); updateInventory();
-    typeWriter("You grab the elixir. It hums with power.", renderActions);
+    if(!inventory.includes("sparkling elixir")){
+      inventory.push("sparkling elixir"); updateInventory();
+      typeWriter("You grab the elixir. It hums with power.", renderActions);
+    } else { typeWriter("You already have the elixir.", renderActions); }
     return;
   }
 
-  // --- ROOM NAVIGATION (The Fix) ---
-  // We check if the command includes ANY part of our room names
-  if(input.includes("potion") || input.includes("chamber")) {
-    currentRoom = 'potionChamber';
-    renderRoom();
-    return;
-  }
+  // --- ROOM NAVIGATION ---
+  if(input.includes("potion") || input.includes("chamber")) { currentRoom = 'potionChamber'; renderRoom(); return; }
   if(input.includes("lab")) { currentRoom = 'lab'; renderRoom(); return; }
   if(input.includes("pantry")) { currentRoom = 'pantry'; renderRoom(); return; }
   if(input.includes("library")) { currentRoom = 'library'; renderRoom(); return; }
@@ -200,9 +214,9 @@ function handleAction(action){
   if(input.includes("vault")) { currentRoom = 'vault'; renderRoom(); return; }
 
   // --- FALLBACK ---
-  // If the code reaches here, it means NO room or item was matched.
   typeWriter(`You attempt to ${action}. The simulation remains stable.`, renderActions);
 }
+
 
 // --- Dice & Randomizers ---
 function rollDice(){ return Math.floor(Math.random()*6)+1; }
