@@ -81,10 +81,10 @@ const rooms = {
   courtyard: { description: "A small courtyard with a fountain and glowing mushrooms.", actions:["Pick a mushroom","Throw coin in fountain","Go to Forest","Return to Lab"] },
   attic: { description: "A dark dusty attic. You hear squeaks.", actions:["Search boxes","Chase mouse","Return to Lab"] },
   forest: { description: "You step into a mysterious forest. Trees glow faintly, mushrooms sprout in strange patterns, and the wind whispers secrets.", actions:["Pick glowing mushroom","Talk to squirrel","Explore deeper","Trade mushroom","Return to Courtyard"] },
-    vault: { 
+        vault: { 
     description: "RECOVERY_COMPLETE. You have entered the heart of the Mainframe. The Doom Loop is playing on every screen.", 
-    actions:["Watch Doom Loop", "Return to Lab"] 
-  }
+    actions:["Watch Doom Loop", "RESTART_SIMULATION", "ENTER_MAINFRAME"] 
+  },
 
 };
 
@@ -99,7 +99,8 @@ const userInput = document.getElementById('userInput');
 const sendBtn = document.getElementById('sendBtn');
 const loadingEl = document.getElementById('loading');
 const mochkilEl = document.getElementById('mochkil');
-// ===== NPC REGISTRY =====
+
+  // ===== NPC REGISTRY =====
 const npcs = {
   azul: { 
     name: "Dr. Azul", 
@@ -205,16 +206,6 @@ function handleAction(action){
     }
     return;
   }
-
-  // ROOM NAVIGATION PATTERN
-  const roomKeys = Object.keys(rooms);
-  const destination = roomKeys.find(key => input.includes(key));
-  if(destination) {
-    currentRoom = destination;
-    renderRoom();
-    mochkilChaos();
-    return;
-  }
   
   // ... [Keep your existing Item & Dice code below here] ...
 
@@ -281,6 +272,7 @@ function handleAction(action){
       inventory = inventory.filter(i => i !== "cookie");
       updateInventory();
       typeWriter("Mochkil purrs loudly and moves aside. 'The Forest path is open, human!'", () => {
+        
         // UNLOCK THE PATH: Add Forest to the Lab or Courtyard actions
         rooms.courtyard.actions.push("Go to Forest");
         typeWriter("SYSTEM: Forest Access Granted.");
@@ -300,6 +292,45 @@ function handleAction(action){
   if(action.includes("Search boxes") && currentRoom==='attic'){ typeWriter("You rummage through dusty boxes. Mochkil hides in one. Classic.",mochkilChaos); return; }
   if(action.includes("Chase mouse") && currentRoom==='attic'){ typeWriter("The mouse squeaks and Mochkil gives chase, knocking over a candle. Oops.",mochkilChaos); return; }
 
+    // THE VAULT INTERACTIONS
+  if(input === "watch doom loop"){
+    typeWriter("POTATO_OVERLOAD: The screens pulse with starchy chaos. The loop is eternal.", () => {
+       document.body.style.background = "radial-gradient(circle, #ff00ff, #0a0a23)";
+    });
+    return;
+  }
+
+  if(input === "restart_simulation"){ location.reload(); return; }
+  
+  if(input === "enter_mainframe"){
+    window.location.href = "https://maximumreality.xyz"; 
+    return;
+  }
+
+    // VICTORY HUB NAVIGATION
+  if(input === "restart_simulation"){ location.reload(); return; }
+  if(input === "enter_mainframe"){ window.location.href = "https://maximumreality.xyz"; return; }
+  if(input === "visit_youtube"){ window.location.href = "https://youtube.com/@maximumrealitylori"; return; }
+  
+    // THE VAULT INTERACTION
+  if(input === "watch doom loop"){
+    typeWriter("POTATO_OVERLOAD: The screens pulse with starchy chaos. The loop is eternal.", () => {
+       document.body.style.background = "radial-gradient(circle, #ff00ff, #0a0a23)";
+    });
+    return;
+  }
+
+    // ROOM NAVIGATION PATTERN
+  const roomKeys = Object.keys(rooms);
+    const destination = roomKeys.find(key => input.includes(key) && key !== 'vault');
+if (destination) {
+
+    currentRoom = destination;
+    renderRoom();
+    mochkilChaos();
+    return;
+  }
+  
   // Default
   typeWriter(`You attempt to ${action}. Something happens.`,mochkilChaos);
 }
