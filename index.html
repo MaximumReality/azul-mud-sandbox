@@ -163,15 +163,20 @@ function rollDice(){ return Math.floor(Math.random()*6)+1; }
 function renderActions(){ actionsEl.innerHTML=''; rooms[currentRoom].actions.forEach(a=>{ const b=document.createElement('button'); b.textContent=a; b.onclick=()=>handleAction(a); actionsEl.appendChild(b); }); }
 
 function renderRoom(){ 
+  // 1. Immediately clear buttons so you can't double-click!
+  actionsEl.innerHTML = ''; 
+  
   showLoading(()=>{ 
     typeWriter(rooms[currentRoom].description,()=>{ 
+      // 2. Only build the new buttons AFTER the text is done
       renderActions();
-      // Only show Azul/Mochkil if they are in this room
+      
       document.getElementById('azul').style.display = (npcs.azul.location === currentRoom) ? "block" : "none";
       document.getElementById('mochkil').style.display = (npcs.mochkil.location === currentRoom) ? "block" : "none";
     }); 
   }); 
 }
+
 
 
 // ===== Mochkil Mischief =====
