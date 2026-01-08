@@ -375,7 +375,11 @@ function updateInventory(){ inventoryEl.innerHTML = "🎒 <span style='color:#00
 sendBtn.onclick=()=>{ const v=userInput.value.trim(); if(v) handleAction(v); userInput.value=''; };
 
 // ===== Init =====
-renderRoom(); updateInventory();
+typing = false; // Reset the "brain"
+currentRoom = 'lab'; 
+renderRoom(); 
+updateInventory();
+
   function startPotatoRain() {
   const count = 30; // Number of potatoes
   for (let i = 0; i < count; i++) {
