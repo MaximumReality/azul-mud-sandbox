@@ -81,10 +81,18 @@ img.sprite { position: absolute; width: 64px; image-rendering: pixelated; z-inde
 <script>
 // ===== Adventure Rooms =====
 const rooms = {
-  lab: { description: "You are in the Glowing Lab. Test tubes bubble, strange liquids float mid-air.", actions:["Inspect test tubes","Give elixir to Azul","Search glowing bookshelf","Go to Library","Go to Courtyard"] },
+  lab: { 
+  description: "You are in the Glowing Lab. Test tubes bubble, strange liquids float mid-air.", 
+  actions:["Inspect test tubes","Give elixir to Azul","Search glowing bookshelf","Go to Library","Go to Courtyard", "Go to Pantry"] 
+},
+
   pantry: { description: "You are in the Secret Pantry. Mochkil is blocking the exit to the Forest, looking hungry.", actions:["Take cookie","Give cookie to Mochkil","Return to Lab"] },
   potionChamber: { description: "A hidden chamber filled with glowing potions.", actions:["Take sparkling elixir","Return to Lab","Drink random potion"] },
-  library: { description: "Endless shelves of dusty books, some levitating mysteriously.", actions:["Read a book","Search for spell scroll","Return to Lab"] },
+  library: { 
+  description: "Endless shelves of dusty books, some levitating mysteriously.", 
+  actions:["Read a book","Search for spell scroll","Go to Potion Chamber","Return to Lab"] 
+},
+
   courtyard: { description: "A small courtyard with a fountain and glowing mushrooms.", actions:["Pick a mushroom","Throw coin in fountain","Go to Forest","Return to Lab"] },
   attic: { description: "A dark dusty attic. You hear squeaks.", actions:["Search boxes","Chase mouse","Return to Lab"] },
   forest: { description: "You step into a mysterious forest. Trees glow faintly, mushrooms sprout in strange patterns, and the wind whispers secrets.", actions:["Pick glowing mushroom","Talk to squirrel","Explore deeper","Trade mushroom","Return to Courtyard"] },
@@ -126,8 +134,17 @@ const npcs = {
       "chaos": "Mochkil knocks over a virtual jar. 'Whoops. Reality glitch.'",
       "default": "Mochkil is licking a wooden spoon suspiciously."
     }
+  },
+
+  squirrel: {
+    name: "The Forest Squirrel",
+    location: "forest",
+    dialogue: {
+      "default": "The squirrel chitters: 'The Ghost Broom? I've seen it... but only Azul knows how to reveal it!'"
+    }
   }
 };
+  
 
 // ===== Helpers =====
 function showLoading(cb){ loadingEl.style.display='block'; setTimeout(()=>{ loadingEl.style.display='none'; if(cb) cb(); },400); }
