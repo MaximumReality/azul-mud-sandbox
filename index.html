@@ -142,6 +142,31 @@ function handleAction(action){
     return;
   }
 
+  // --- SQUIRREL DIALOGUE & TRADE ---
+  if(input.includes("talk to squirrel") && currentRoom === 'forest'){
+    typeWriter("The Squirrel chitters: 'The Ghost Broom? I've seen it... but only Azul knows how to reveal it!'", renderActions);
+    return;
+  }
+
+  // --- THE VAULT & POTATOES ---
+  if(input.includes("watch doom loop") && currentRoom === 'vault'){
+    typeWriter("POTATO_OVERLOAD: The loop is eternal. Starchy chaos incoming!", () => {
+       document.body.style.background = "radial-gradient(circle, #ff00ff, #0a0a23)";
+       startPotatoRain(); // <--- THIS triggers the potatoes!
+       renderActions();
+    });
+    return;
+  }
+
+  // --- ESCAPE THE VAULT (Victory Navigation) ---
+  if(input.includes("restart_simulation")){ location.reload(); return; }
+  
+  if(input.includes("enter_mainframe")){ 
+    typeWriter("Exiting Simulation... Redirecting to MaximumReality.xyz", () => {
+      window.location.href = "https://maximumreality.xyz"; 
+    });
+    return; 
+  }
 
     // --- QUEST: GIVE COOKIE ---
   if(input.includes("give cookie")){
