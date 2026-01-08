@@ -224,18 +224,21 @@ function handleAction(action){
     return;
   }
 
-  // --- Room Navigation ---
+   // --- Robust Room Navigation ---
+  // This looks for ANY room name inside the command
   const roomKeys = Object.keys(rooms);
-  const destination = roomKeys.find(key => input.includes(key.toLowerCase()) && key !== 'vault');
+  const destination = roomKeys.find(key => input.includes(key.toLowerCase()));
+  
   if (destination) {
     currentRoom = destination;
     renderRoom();
-    return;
+    return; // This stops the "Simulation remains stable" message
   }
 
-  // --- Fallback ---
+  // --- Fallback (Only fires if NO room or item was matched) ---
   typeWriter(`You attempt to ${action}. The simulation remains stable.`, renderActions);
 }
+
 // --- Dice & Randomizers ---
 function rollDice(){ return Math.floor(Math.random()*6)+1; }
 
