@@ -293,16 +293,18 @@ function handleAction(action){
     return;
   }
 
-  // THE COOKIE TRADE
+    // THE COOKIE TRADE
   if(action.includes("Give cookie to Mochkil") && currentRoom === 'pantry'){
     if(inventory.includes("cookie")){
       inventory = inventory.filter(i => i !== "cookie");
       updateInventory();
       typeWriter("Mochkil purrs loudly and moves aside. 'The Forest path is open, human!'", () => {
-        
-        // UNLOCK THE PATH: Add Forest to the Lab or Courtyard actions
-        rooms.courtyard.actions.push("Go to Forest");
-        typeWriter("SYSTEM: Forest Access Granted.");
+        // CLEAN LOGIC: Only add the Forest button to the Courtyard!
+        if (!rooms.courtyard.actions.includes("Go to Forest")) {
+           rooms.courtyard.actions.push("Go to Forest");
+        }
+        typeWriter("SYSTEM: Forest Access Granted via Courtyard.");
+        renderActions(); // Refresh buttons immediately
         mochkilChaos();
       });
     } else {
@@ -310,6 +312,7 @@ function handleAction(action){
     }
     return;
   }
+
 
   // Library fun
   if(action.includes("Read a book") && currentRoom==='library'){ const jokes=["You read a book. The book ignores you. Rude.","Azul whispers: 'Try turning it off and on.'","A tiny goblin pops out and says: 'Socks are better than shoes!'"]; typeWriter(jokes[Math.floor(Math.random()*jokes.length)],mochkilChaos); return; }
