@@ -2,107 +2,104 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Azul & Mochkil MUD Sandbox – Forest & Trading</title>
-
+<title>Azul & Mochkil: Maximum Reality</title>
 <style>
-body {
-  background: #0a0a23;
-  color: #00ffff;
-  font-family: monospace;
-  margin: 0;
-  padding: 0;
-  text-shadow: 0 0 6px #00ffff, 0 0 12px #00ffff;
-}
-
-.container {
-  max-width: 420px;
-  margin: auto;
-  padding: 12px 12px 80px 12px;
-  position: relative;
-}
+  body {
+    background: #0a0a23;
+    color: #00ffff;
+    font-family: monospace;
+    margin: 0;
+    padding: 0;
+    text-shadow: 0 0 6px #00ffff;
+    overflow-x: hidden;
+  }
+  .container {
+    max-width: 420px;
+    margin: auto;
+    padding: 12px 12px 80px 12px;
+    position: relative;
+  }
   @keyframes glitch-flicker {
-  0% { opacity: 0.9; }
-  50% { opacity: 1; }
-  100% { opacity: 0.9; }
-}
-.vault-active { animation: glitch-flicker 0.2s infinite; }
-
-
-h1 {
-  margin-top: 80px;
-  text-align: center;
-  color: #ffcc00;
-  text-shadow: 0 0 6px #ffcc00, 0 0 12px #ffcc00, 0 0 20px #ffdd33;
-}
-
-#story { min-height: 140px; margin: 10px 0; z-index: 10; color: #00ffff; text-shadow: 0 0 4px #00ffff, 0 0 8px #00ffff; }
-#loading, #dice { color: #ff66cc; text-shadow: 0 0 6px #ff66cc, 0 0 12px #ff66cc; }
-
-#actions button {
-  display: block; width: 100%; margin: 4px 0; padding: 10px;
-  font-size: 1.1em; background: #111144; color: #fff; border: 1px solid #00ffff; border-radius: 4px; text-shadow: 0 0 2px #00ffff;
-}
-#actions button:hover { background: #3333aa; box-shadow: 0 0 12px #00ffff; }
-
-#inventory { margin-top: 8px; position: relative; z-index: 20; color: #ffcc66; text-shadow: 0 0 6px #ffcc66, 0 0 12px #ffcc66; }
-
-#inputRow { display: flex; gap: 6px; margin-top: 10px; position: relative; z-index: 20; }
-#inputRow input { flex: 1; padding: 8px; font-size: 1em; background: #111133; color: #00ffff; border: 1px solid #00ffff; border-radius: 4px; }
-#inputRow button { background: #333366; color: #fff; border: 1px solid #00ffff; border-radius: 4px; padding: 8px 12px; font-size: 1em; }
-
-img.sprite { position: absolute; width: 64px; image-rendering: pixelated; z-index: 5; transition: all 0.3s ease; }
-#azul { top: 10px; left: 10px; animation: glow 2s infinite; }
-#mochkil { bottom: 20px; right: 10px; animation: glow 2s infinite alternate; }
-@keyframes glow { 0%,100%{filter: drop-shadow(0 0 4px #00ffff);}50%{filter: drop-shadow(0 0 12px #00ffff);} }
+    0% { opacity: 0.9; }
+    50% { opacity: 1; }
+    100% { opacity: 0.9; }
+  }
+  .vault-active { animation: glitch-flicker 0.2s infinite; }
+  h1 {
+    margin-top: 80px;
+    text-align: center;
+    color: #ffcc00;
+    text-shadow: 0 0 10px #ffcc00;
+    font-size: 1.4em;
+  }
+  #story { min-height: 140px; margin: 10px 0; line-height: 1.4; }
+  #loading, #dice { color: #ff66cc; text-shadow: 0 0 6px #ff66cc; font-weight: bold; }
+  #dice { cursor: pointer; font-size: 1.5em; display: inline-block; margin-bottom: 10px; }
+  #actions button {
+    display: block; width: 100%; margin: 6px 0; padding: 12px;
+    font-size: 1em; background: #111144; color: #fff; 
+    border: 1px solid #00ffff; border-radius: 4px;
+  }
+  #inventory { margin-top: 15px; color: #ffcc66; font-size: 0.9em; border-top: 1px solid #333; padding-top: 10px; }
+  #inputRow { display: flex; gap: 6px; margin-top: 15px; }
+  #inputRow input { flex: 1; padding: 10px; background: #111133; color: #00ffff; border: 1px solid #00ffff; border-radius: 4px; }
+  #inputRow button { background: #333366; color: #fff; border: 1px solid #00ffff; padding: 10px; border-radius: 4px; }
+  img.sprite { position: absolute; width: 64px; image-rendering: pixelated; z-index: 5; transition: all 0.3s ease; }
+  #azul { top: 10px; left: 10px; filter: drop-shadow(0 0 5px #00ffff); }
+  #mochkil { top: 10px; right: 10px; filter: drop-shadow(0 0 5px #ff66cc); }
 </style>
 </head>
 
-<body>
+  <body>
 <div class="container">
-
   <img id="azul" class="sprite" src="https://raw.githubusercontent.com/MaximumReality/azul-story-cyoa-sandbox/main/azul.png">
   <img id="mochkil" class="sprite" src="https://raw.githubusercontent.com/MaximumReality/azul-story-cyoa-sandbox/main/mochkil.png">
 
-  <h1>Azul & Mochkil MUD Sandbox – Forest & Trading</h1>
+  <h1>Azul & Mochkil: Maximum Reality</h1>
 
   <div id="story"></div>
-  <div id="loading">💾 Reading adventure from disk...</div>
-  <div id="dice">🎲</div>
+  <div id="loading" style="display:none">💾 SYNCING_REALITY...</div>
+  <div id="dice">🎲 Roll Dice</div>
   <div id="actions"></div>
-  <div id="inventory"></div>
+  <div id="inventory">🎒 DATA_PACKETS: EMPTY</div>
 
   <div id="inputRow">
     <input id="userInput" placeholder="Enter command">
     <button id="sendBtn">Send</button>
   </div>
-
 </div>
 
 <script>
-// ===== Adventure Rooms =====
 const rooms = {
   lab: { 
-  description: "You are in the Glowing Lab. Test tubes bubble, strange liquids float mid-air.", 
-  actions:["Inspect test tubes","Give elixir to Azul","Search glowing bookshelf","Go to Library","Go to Courtyard", "Go to Pantry"] 
-},
-
-  pantry: { description: "You are in the Secret Pantry. Mochkil is blocking the exit to the Forest, looking hungry.", actions:["Take cookie","Give cookie to Mochkil","Return to Lab"] },
-  potionChamber: { description: "A hidden chamber filled with glowing potions.", actions:["Take sparkling elixir","Return to Lab","Drink random potion"] },
-  library: { 
-  description: "Endless shelves of dusty books, some levitating mysteriously.", 
-  actions:["Read a book","Search for spell scroll","Go to Potion Chamber","Return to Lab"] 
-},
-
-  courtyard: { description: "A small courtyard with a fountain and glowing mushrooms.", actions:["Pick a mushroom","Throw coin in fountain","Go to Forest","Return to Lab"] },
-  attic: { description: "A dark dusty attic. You hear squeaks.", actions:["Search boxes","Chase mouse","Return to Lab"] },
-  forest: { description: "You step into a mysterious forest. Trees glow faintly, mushrooms sprout in strange patterns, and the wind whispers secrets.", actions:["Pick glowing mushroom","Talk to squirrel","Explore deeper","Trade mushroom","Return to Courtyard"] },
-        vault: { 
-    description: "RECOVERY_COMPLETE. You have entered the heart of the Mainframe. The Doom Loop is playing on every screen.", 
-    actions:["Watch Doom Loop", "RESTART_SIMULATION", "ENTER_MAINFRAME"] 
+    description: "You are in the Glowing Lab. Test tubes bubble with quantum foam.", 
+    actions:["Inspect test tubes","Give elixir to Azul","Go to Library","Go to Courtyard", "Go to Pantry"] 
   },
-
+  pantry: { 
+    description: "The Secret Pantry. Chef Mochkil is guarding the exit to the Forest.", 
+    actions:["Take cookie","Give cookie to Mochkil","Return to Lab"] 
+  },
+  potionChamber: { 
+    description: "A hidden chamber filled with glowing potions.", 
+    actions:["Take sparkling elixir","Return to Lab"] 
+  },
+  library: { 
+    description: "Endless shelves of dusty books, some levitating mysteriously.", 
+    actions:["Read a book","Search for spell scroll","Go to Potion Chamber","Return to Lab"] 
+  },
+  courtyard: { 
+    description: "A courtyard with a fountain. You can smell the distant Forest.", 
+    actions:["Pick a mushroom","Throw coin in fountain","Return to Lab"] 
+  },
+  forest: { 
+    description: "The Mysterious Forest. The trees whisper binary secrets.", 
+    actions:["Pick glowing mushroom","Talk to squirrel","Explore deeper","Trade mushroom","Return to Courtyard"] 
+  },
+  vault: { 
+    description: "MAINFRAME_HEART. The Doom Loop is playing on every screen.", 
+    actions:["Watch Doom Loop", "RESTART_SIMULATION", "ENTER_MAINFRAME"] 
+  }
 };
-
 let currentRoom = 'lab';
 let inventory = [];
 let typing = false;
@@ -113,316 +110,188 @@ const inventoryEl = document.getElementById('inventory');
 const userInput = document.getElementById('userInput');
 const sendBtn = document.getElementById('sendBtn');
 const loadingEl = document.getElementById('loading');
-const mochkilEl = document.getElementById('mochkil');
 
-  // ===== NPC REGISTRY =====
 const npcs = {
-  azul: { 
-    name: "Dr. Azul", 
-    location: "lab", 
-    dialogue: {
-      "hello": "Azul adjusts his goggles. 'The quantum fibers are stable today.'",
-      "pounce": "Azul levitates slightly. 'My velocity is unmatched, human.'",
-      "default": "Azul is busy calibrating a floating test tube."
-    }
-  },
-  mochkil: { 
-    name: "Chef Mochkil", 
-    location: "pantry", 
-    dialogue: {
-      "cookie": "Mochkil's eyes widen. 'Cookies are the currency of the future!'",
-      "chaos": "Mochkil knocks over a virtual jar. 'Whoops. Reality glitch.'",
-      "default": "Mochkil is licking a wooden spoon suspiciously."
-    }
-  },
-
-  squirrel: {
-    name: "The Forest Squirrel",
-    location: "forest",
-    dialogue: {
-      "default": "The squirrel chitters: 'The Ghost Broom? I've seen it... but only Azul knows how to reveal it!'"
-    }
-  }
+  azul: { name: "Dr. Azul", location: "lab", dialogue: "Azul adjusts his goggles. 'Quantum fibers are stable.'" },
+  mochkil: { name: "Chef Mochkil", location: "pantry", dialogue: "Mochkil licks a wooden spoon. 'Cookies are currency!'" },
+  squirrel: { name: "Forest Squirrel", location: "forest", dialogue: "The squirrel chitters: 'The Ghost Broom is hidden!'" }
 };
-  
 
-// ===== Helpers =====
-function showLoading(cb){ loadingEl.style.display='block'; setTimeout(()=>{ loadingEl.style.display='none'; if(cb) cb(); },400); }
+// --- Core Helper Functions ---
+function showLoading(cb){ 
+  loadingEl.style.display='block'; 
+  setTimeout(()=>{ loadingEl.style.display='none'; if(cb) cb(); }, 400); 
+}
 
 function typeWriter(text, cb){ 
-  if(typing) return; typing=true; storyEl.textContent=''; let i=0; (function step(){ 
-    if(i<text.length){ storyEl.textContent+=text[i++]; setTimeout(step,25); } 
-    else{ typing=false; if(cb) cb(); } 
+  if(typing) return; 
+  typing = true; 
+  storyEl.textContent = ''; 
+  let i = 0; 
+  (function step(){ 
+    if(i < text.length){ 
+      storyEl.textContent += text[i++]; 
+      setTimeout(step, 25); 
+    } else { 
+      typing = false; 
+      if(cb) cb(); 
+    } 
   })(); 
 }
 
-// ===== Dice =====
-function rollDice(){ return Math.floor(Math.random()*6)+1; }
+// --- Rendering functions ---
+function updateInventory(){ 
+  inventoryEl.innerHTML = "🎒 <span style='color:#00ffff'>DATA_PACKETS:</span> " + 
+    (inventory.length ? inventory.join(' | ') : 'EMPTY'); 
+}
 
-// ===== Render =====
-function renderActions(){ actionsEl.innerHTML=''; rooms[currentRoom].actions.forEach(a=>{ const b=document.createElement('button'); b.textContent=a; b.onclick=()=>handleAction(a); actionsEl.appendChild(b); }); }
+function renderActions(){ 
+  actionsEl.innerHTML = ''; 
+  rooms[currentRoom].actions.forEach(a => { 
+    const b = document.createElement('button'); 
+    b.textContent = a; 
+    b.onclick = () => handleAction(a); 
+    actionsEl.appendChild(b); 
+  }); 
+}
 
 function renderRoom(){ 
-  // 1. Immediately clear buttons so you can't double-click!
-  actionsEl.innerHTML = ''; 
-  
-  showLoading(()=>{ 
-    typeWriter(rooms[currentRoom].description,()=>{ 
-      // 2. Only build the new buttons AFTER the text is done
+  actionsEl.innerHTML = ''; // Prevent double-clicks
+  showLoading(() => { 
+    typeWriter(rooms[currentRoom].description, () => { 
       renderActions();
-      
+      // Manage Sprite Visibility
       document.getElementById('azul').style.display = (npcs.azul.location === currentRoom) ? "block" : "none";
       document.getElementById('mochkil').style.display = (npcs.mochkil.location === currentRoom) ? "block" : "none";
     }); 
   }); 
 }
-
-
-
-// ===== Mochkil Mischief =====
-function mochkilChaos(){
-  if(Math.random()<0.4 && !typing){
-    const containerWidth = document.querySelector('.container').clientWidth;
-    const containerHeight = 350;
-    const x = Math.random()*(containerWidth-64);
-    const y = Math.random()*(containerHeight-64);
-    mochkilEl.style.left=x+'px'; mochkilEl.style.top=y+'px';
-
-    if(Math.random()<0.5 && actionsEl.children.length>1){
-      for(let i=actionsEl.children.length;i>=0;i--){
-        actionsEl.appendChild(actionsEl.children[Math.floor(Math.random()*i)]);
-      }
-    }
-
-    const chaosMessages=["Mochkil is plotting something...","Mochkil looks bored. Very bored.","Mochkil sits on a button. Oops!","Azul rolls eyes at Mochkil's antics."];
-    typeWriter(chaosMessages[Math.floor(Math.random()*chaosMessages.length)]);
-  }
-}
-
-// ===== Random NPC Comments =====
-const randomComments=["Mochkil glares at you. 'Really? THAT again?'","Azul floats by: 'Are you even trying?'","A floating test tube rolls past. 'Oops! Watch out!'","Mochkil whispers: 'I hide your cookies. Forever.'","Azul giggles: 'This potion smells like old cheese!'"];
-function randomNPCComment(){ if(Math.random()<0.3 && !typing){ const c=randomComments[Math.floor(Math.random()*randomComments.length)]; typeWriter(c); } }
-setInterval(randomNPCComment,7000);
-
-// ===== Forest Comments =====
-const forestComments=["A bird says: 'Don't look behind the trees!'","Mochkil hides in a bush and giggles.","Azul floats above: 'Watch your step, adventurer!'","A squirrel stares at you suspiciously."];
-function randomForestComment(){ if(currentRoom==='forest' && Math.random()<0.4 && !typing){ const c=forestComments[Math.floor(Math.random()*forestComments.length)]; typeWriter(c); } }
-setInterval(randomForestComment,8000);
-
-// ===== Mochkil stealing Azul-o's box =====
-function mochkilSteal(){
-  if(Math.random()<0.2 && inventory.includes("Azul-o's box")){
-    inventory = inventory.filter(i=>"Azul-o's box"!==i);
-    updateInventory();
-    typeWriter("Mochkil snatches the Azul-o’s box! Naughty kitty! 🍫", null);
-  }
-}
-setInterval(mochkilSteal,12000);
-
-// ===== Actions =====
 function handleAction(action){
-  if(typing) return; // <--- THIS IS THE KEY! It stops the "Double Command" 
-  
+  if(typing) return;
   const input = action.toLowerCase();
-  
-  // Immediately clear buttons on click so the UI stays clean
-  actionsEl.innerHTML = ''; 
+  actionsEl.innerHTML = ''; // Clear UI immediately
 
-  // ... rest of your NPC logic ...
-
-  // NPC INTERACTION PATTERN
+  // --- NPC Interaction ---
   if(input.startsWith("talk to ")){
     const target = input.replace("talk to ", "").trim();
-    const npc = npcs[target];
-    
-    if(npc && npc.location === currentRoom) {
-      typeWriter(npc.dialogue["default"], mochkilChaos);
+    if(target === "squirrel" && currentRoom === 'forest') {
+      typeWriter(npcs.squirrel.dialogue, renderActions);
+    } else if(npcs[target] && npcs[target].location === currentRoom) {
+      typeWriter(npcs[target].dialogue, renderActions);
     } else {
-      typeWriter(`There is no one named ${target} here.`, mochkilChaos);
-    }
-    return;
-  }
-  
-  // ... [Keep your existing Item & Dice code below here] ...
-
-  // Items & Dice Effects
-  if(action.includes("Take cookie") && currentRoom==='pantry' && !inventory.includes("cookie")){ inventory.push("cookie"); updateInventory(); typeWriter("You grab a cookie. Mochkil squeals happily!",mochkilChaos); return; }
-  if(action.includes("Take sparkling elixir") && currentRoom==='potionChamber' && !inventory.includes("sparkling elixir")){ inventory.push("sparkling elixir"); updateInventory(); typeWriter("You carefully grab the Sparkling Elixir. Azul hums approvingly!",mochkilChaos); return; }
-  if(action.includes("Drink random potion") && currentRoom==='potionChamber'){ const effects=["You glow like a neon sign! 🌟","You hiccup rainbows 🌈","You levitate for 5 seconds 🪂"]; typeWriter(effects[Math.floor(Math.random()*effects.length)],mochkilChaos); return; }
-  if(action.includes("Pick a mushroom") && (currentRoom==='courtyard'||currentRoom==='forest')){ const dice=rollDice(); inventory.push("glowing mushroom"); updateInventory(); let msg=""; switch(dice){ case 1: msg="The mushroom tastes terrible. Mochkil gags. 🤢"; break; case 2: msg="You pick a mushroom. Nothing happens… for now."; break; case 3: msg="The mushroom glows brighter! You feel slightly heroic."; break; case 4: msg="A tiny fairy pops out and says hello. 🧚"; break; case 5: msg="The mushroom explodes confetti! 🎉"; break; case 6: msg="Mochkil eats it before you can. Classic."; break; } typeWriter(msg,mochkilChaos); return; }
-  if(action.includes("Talk to squirrel") && currentRoom==='forest'){ const msgs=["The squirrel stares at you suspiciously.","Squirrel chat: 'I saw nothing. Promise.'","Squirrel tosses you an acorn."]; typeWriter(msgs[Math.floor(Math.random()*msgs.length)],mochkilChaos); return; }
-  if(action.includes("Explore deeper") && currentRoom==='forest'){ const outcomes=["You find a hidden clearing with glowing mushrooms.","Mochkil hides behind a tree, giggling.","Azul floats through branches making jokes.","A mysterious voice whispers: 'Beware the cookie thief...'"]; typeWriter(outcomes[Math.floor(Math.random()*outcomes.length)],mochkilChaos); return; }
-
-  // Trading in forest
-  if(action.includes("Trade mushroom") && currentRoom==='forest'){
-    if(inventory.includes("glowing mushroom")){
-      inventory = inventory.filter(i => i!=="glowing mushroom");
-      inventory.push("Azul-o's box");
-      updateInventory();
-      typeWriter("You trade a glowing mushroom and receive a box of Azul-o’s! Mochkil eyes it hungrily. 🍫", mochkilChaos);
-    } else {
-      typeWriter("You have nothing to trade. The squirrel looks disappointed.", mochkilChaos);
-    }
-    return;
-  }
-    // SEARCH FOR BROOM LOGIC
-  if(action.includes("Search for Ghost Broom") && currentRoom === 'forest'){
-    typeWriter("Scanning forest floor... GHOST_BROOM.obj detected!", () => {
-      inventory.push("Ghost Broom");
-      updateInventory();
-      // After finding it, the 'Teleport' action becomes available
-      rooms.forest.actions.push("Use Ghost Broom");
-      renderActions();
-    });
-    return;
-  }
-      if(action.includes("Use Ghost Broom")){
-    typeWriter("The broom glows pink. Reality glitches... Teleporting to Vault.", () => {
-      currentRoom = 'vault';
-      // This line triggers the CSS you just added!
-      document.body.classList.add('vault-active'); 
-      renderRoom();
-    });
-    return;
-  }
-
-
-  // AZUL'S DIAGNOSTIC
-  if(action.includes("Give elixir to Azul") && currentRoom === 'lab'){
-    if(inventory.includes("sparkling elixir")){
-      inventory = inventory.filter(i => i !== "sparkling elixir");
-      updateInventory();
-      typeWriter("Azul drinks the elixir. His eyes glow neon blue! 'I see it now... the Ghost Broom is hidden in the Forest shadows.'", () => {
-        // TRIGGER: Reveal the hidden command in the Forest
-        if (!rooms.forest.actions.includes("Search for Ghost Broom")) {
-           rooms.forest.actions.push("Search for Ghost Broom");
-        }
-        typeWriter("SYSTEM: Quest Data Updated: Forest Scan Available.");
-      });
-    } else {
-      typeWriter("Azul sighs. 'My sensors are low. I need that Sparkling Elixir from the bookshelf chamber.'");
+      typeWriter(`SYSTEM: ${target} not found in this sector.`, renderActions);
     }
     return;
   }
 
-    // THE COOKIE TRADE
-  if(action.includes("Give cookie to Mochkil") && currentRoom === 'pantry'){
+  // --- Item & Quest Logic ---
+  if(action.includes("Take cookie") && currentRoom==='pantry'){
+    if(!inventory.includes("cookie")){
+      inventory.push("cookie"); updateInventory();
+      typeWriter("You grab a cookie. Mochkil's whiskers twitch with joy!", renderActions);
+    } else { typeWriter("You already have a cookie.", renderActions); }
+    return;
+  }
+
+  if(action.includes("Give cookie to Mochkil") && currentRoom==='pantry'){
     if(inventory.includes("cookie")){
-      inventory = inventory.filter(i => i !== "cookie");
-      updateInventory();
-      typeWriter("Mochkil purrs loudly and moves aside. 'The Forest path is open, human!'", () => {
-        // CLEAN LOGIC: Only add the Forest button to the Courtyard!
+      inventory = inventory.filter(i => i !== "cookie"); updateInventory();
+      typeWriter("Mochkil eats the cookie. 'Delicious! The Forest is open.'", () => {
         if (!rooms.courtyard.actions.includes("Go to Forest")) {
-           rooms.courtyard.actions.push("Go to Forest");
+          rooms.courtyard.actions.push("Go to Forest");
         }
-        typeWriter("SYSTEM: Forest Access Granted via Courtyard.");
-        renderActions(); // Refresh buttons immediately
-        mochkilChaos();
+        renderActions();
       });
-    } else {
-      typeWriter("Mochkil hisses. 'No cookie, no Forest. Those are the rules.'");
-    }
+    } else { typeWriter("Mochkil hisses: 'No cookie, no entry.'", renderActions); }
     return;
   }
 
+  if(action.includes("Take sparkling elixir") && currentRoom==='potionChamber'){
+    if(!inventory.includes("sparkling elixir")){
+      inventory.push("sparkling elixir"); updateInventory();
+      typeWriter("The elixir glows in your hand. Azul will want this.", renderActions);
+    } return;
+  }
 
-  // Library fun
-  if(action.includes("Read a book") && currentRoom==='library'){ const jokes=["You read a book. The book ignores you. Rude.","Azul whispers: 'Try turning it off and on.'","A tiny goblin pops out and says: 'Socks are better than shoes!'"]; typeWriter(jokes[Math.floor(Math.random()*jokes.length)],mochkilChaos); return; }
-  if(action.includes("Search for spell scroll") && currentRoom==='library'){ inventory.push("spell scroll"); updateInventory(); typeWriter("You find a spell scroll! Who knows what it does...",mochkilChaos); return; }
-
-  // Attic fun
-  if(action.includes("Search boxes") && currentRoom==='attic'){ typeWriter("You rummage through dusty boxes. Mochkil hides in one. Classic.",mochkilChaos); return; }
-  if(action.includes("Chase mouse") && currentRoom==='attic'){ typeWriter("The mouse squeaks and Mochkil gives chase, knocking over a candle. Oops.",mochkilChaos); return; }
-
-   
-
-    // VICTORY HUB NAVIGATION
-  if(input === "restart_simulation"){ location.reload(); return; }
-  if(input === "enter_mainframe"){ window.location.href = "https://maximumreality.xyz"; return; }
-  if(input === "visit_youtube"){ window.location.href = "https://youtube.com/@maximumrealitylori"; return; }
-  
-      // THE VAULT INTERACTION
-  if(input === "watch doom loop"){
-    typeWriter("POTATO_OVERLOAD: The screens pulse with starchy chaos. The loop is eternal.", () => {
-       document.body.style.background = "radial-gradient(circle, #ff00ff, #0a0a23)";
-       startPotatoRain(); // <--- THE POTATOES ARE NOW LIVE!
-    });
+  if(action.includes("Give elixir to Azul") && currentRoom==='lab'){
+    if(inventory.includes("sparkling elixir")){
+      inventory = inventory.filter(i => i !== "sparkling elixir"); updateInventory();
+      typeWriter("Azul drinks. 'Power restored! I sense a Ghost Broom in the Forest.'", () => {
+        if(!rooms.forest.actions.includes("Search for Ghost Broom")) rooms.forest.actions.push("Search for Ghost Broom");
+        renderActions();
+      });
+    } else { typeWriter("Azul sighs. 'I need that sparkling elixir...'", renderActions); }
     return;
   }
 
-  
-    // POTION CHAMBER ENTRANCE
-  if(input === "go to potion chamber"){
-    currentRoom = 'potionChamber';
-    renderRoom();
-    renderActions(); // Forces the buttons to update instantly
-    return;
-  }
-
-
-    // ROOM NAVIGATION PATTERN
+  // --- Room Navigation ---
   const roomKeys = Object.keys(rooms);
-    const destination = roomKeys.find(key => input.includes(key) && key !== 'vault');
-if (destination) {
-
+  const destination = roomKeys.find(key => input.includes(key.toLowerCase()) && key !== 'vault');
+  if (destination) {
     currentRoom = destination;
     renderRoom();
-    mochkilChaos();
     return;
   }
-  
-  // Default
-  typeWriter(`You attempt to ${action}. Something happens.`,mochkilChaos);
+
+  // --- Fallback ---
+  typeWriter(`You attempt to ${action}. The simulation remains stable.`, renderActions);
 }
+// --- Dice & Randomizers ---
+function rollDice(){ return Math.floor(Math.random()*6)+1; }
 
-// ===== Inventory =====
-function updateInventory(){ inventoryEl.innerHTML = "🎒 <span style='color:#00ffff'>DATA_PACKETS:</span> " + (inventory.length ? inventory.join(' | ') : 'EMPTY'); }
+const diceEl = document.getElementById('dice');
+diceEl.onclick = () => {
+  if(typing) return;
+  const roll = rollDice();
+  typeWriter(`🎲 DATA_RECOVERY: Rolled ${roll}. Re-syncing UI...`, renderActions);
+  if(roll === 6) {
+    typeWriter("🎲 CRITICAL HIT! Mochkil triggers a Snack Attack!", startPotatoRain);
+  }
+};
 
-// ===== Input =====
-sendBtn.onclick=()=>{ const v=userInput.value.trim(); if(v) handleAction(v); userInput.value=''; };
-
-// ===== Init =====
-typing = false; // Reset the "brain"
-currentRoom = 'lab'; 
-renderRoom(); 
-updateInventory();
-
-  function startPotatoRain() {
-  const count = 30; // Number of potatoes
+// --- Special Effects ---
+function startPotatoRain() {
+  const count = 25;
   for (let i = 0; i < count; i++) {
     setTimeout(() => {
       const p = document.createElement('div');
       p.textContent = '🥔';
-      p.style.position = 'fixed';
-      p.style.top = '-50px';
-      p.style.left = Math.random() * 100 + 'vw';
-      p.style.fontSize = Math.random() * 20 + 20 + 'px';
-      p.style.zIndex = '1000';
-      p.style.pointerEvents = 'none';
-      p.style.transition = `transform ${Math.random() * 2 + 2}s linear, opacity 2s`;
-      
+      p.style.cssText = `position:fixed; top:-50px; left:${Math.random()*100}vw; font-size:24px; z-index:1000; pointer-events:none; transition: transform 2s linear;`;
       document.body.appendChild(p);
-
-      // Animate falling
       setTimeout(() => {
-        p.style.transform = `translateY(${window.innerHeight + 100}px) rotate(${Math.random() * 360}deg)`;
-        setTimeout(() => p.remove(), 3000);
+        p.style.transform = `translateY(${window.innerHeight + 100}px) rotate(360deg)`;
+        setTimeout(() => p.remove(), 2500);
       }, 100);
-    }, i * 100);
+    }, i * 150);
   }
 }
-const diceEl = document.getElementById('dice');
-diceEl.style.cursor = "pointer"; // Makes it tappable on iPhone
 
-diceEl.onclick = () => {
-  if(typing) return;
-  const roll = rollDice();
-  typeWriter(`🎲 DATA_RECOVERY: You rolled a ${roll}. Re-initializing room interface...`, () => {
-    renderActions(); // Forces buttons to reappear!
-    if(roll === 6) typeWriter("Mochkil purrs: 'I found your buttons! They were under the virtual rug.'");
+// --- Specific Action Overrides ---
+// (Add these to the end of handleAction logic if needed)
+if(input === "watch doom loop") {
+  typeWriter("The screens pulse. The starch is eternal.", () => {
+    document.body.style.background = "radial-gradient(circle, #ff00ff, #0a0a23)";
+    startPotatoRain();
   });
+}
+
+if(input === "restart_simulation") location.reload();
+if(input === "enter_mainframe") window.location.href = "https://maximumreality.xyz";
+
+// --- Input Handling ---
+sendBtn.onclick = () => {
+  const v = userInput.value.trim();
+  if(v) handleAction(v);
+  userInput.value = '';
 };
 
+userInput.addEventListener("keypress", (e) => {
+  if (e.key === "Enter") sendBtn.click();
+});
+
+// --- Boot Sequence ---
+updateInventory();
+renderRoom();
 </script>
 </body>
 </html>
