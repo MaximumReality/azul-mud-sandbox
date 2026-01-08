@@ -292,20 +292,7 @@ function handleAction(action){
   if(action.includes("Search boxes") && currentRoom==='attic'){ typeWriter("You rummage through dusty boxes. Mochkil hides in one. Classic.",mochkilChaos); return; }
   if(action.includes("Chase mouse") && currentRoom==='attic'){ typeWriter("The mouse squeaks and Mochkil gives chase, knocking over a candle. Oops.",mochkilChaos); return; }
 
-    // THE VAULT INTERACTIONS
-  if(input === "watch doom loop"){
-    typeWriter("POTATO_OVERLOAD: The screens pulse with starchy chaos. The loop is eternal.", () => {
-       document.body.style.background = "radial-gradient(circle, #ff00ff, #0a0a23)";
-    });
-    return;
-  }
-
-  if(input === "restart_simulation"){ location.reload(); return; }
-  
-  if(input === "enter_mainframe"){
-    window.location.href = "https://maximumreality.xyz"; 
-    return;
-  }
+   
 
     // VICTORY HUB NAVIGATION
   if(input === "restart_simulation"){ location.reload(); return; }
