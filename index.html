@@ -94,6 +94,27 @@ const userInput = document.getElementById('userInput');
 const sendBtn = document.getElementById('sendBtn');
 const loadingEl = document.getElementById('loading');
 const mochkilEl = document.getElementById('mochkil');
+// ===== NPC REGISTRY =====
+const npcs = {
+  azul: { 
+    name: "Dr. Azul", 
+    location: "lab", 
+    dialogue: {
+      "hello": "Azul adjusts his goggles. 'The quantum fibers are stable today.'",
+      "pounce": "Azul levitates slightly. 'My velocity is unmatched, human.'",
+      "default": "Azul is busy calibrating a floating test tube."
+    }
+  },
+  mochkil: { 
+    name: "Chef Mochkil", 
+    location: "pantry", 
+    dialogue: {
+      "cookie": "Mochkil's eyes widen. 'Cookies are the currency of the future!'",
+      "chaos": "Mochkil knocks over a virtual jar. 'Whoops. Reality glitch.'",
+      "default": "Mochkil is licking a wooden spoon suspiciously."
+    }
+  }
+};
 
 // ===== Helpers =====
 function showLoading(cb){ loadingEl.style.display='block'; setTimeout(()=>{ loadingEl.style.display='none'; if(cb) cb(); },400); }
@@ -111,7 +132,17 @@ function rollDice(){ return Math.floor(Math.random()*6)+1; }
 // ===== Render =====
 function renderActions(){ actionsEl.innerHTML=''; rooms[currentRoom].actions.forEach(a=>{ const b=document.createElement('button'); b.textContent=a; b.onclick=()=>handleAction(a); actionsEl.appendChild(b); }); }
 
-function renderRoom(){ showLoading(()=>{ typeWriter(rooms[currentRoom].description,()=>{ renderActions(); }); }); }
+function renderRoom(){ 
+  showLoading(()=>{ 
+    typeWriter(rooms[currentRoom].description,()=>{ 
+      renderActions();
+      // Only show Azul/Mochkil if they are in this room
+      document.getElementById('azul').style.display = (npcs.azul.location === currentRoom) ? "block" : "none";
+      document.getElementById('mochkil').style.display = (npcs.mochkil.location === currentRoom) ? "block" : "none";
+    }); 
+  }); 
+}
+
 
 // ===== Mochkil Mischief =====
 function mochkilChaos(){
@@ -155,14 +186,32 @@ setInterval(mochkilSteal,12000);
 
 // ===== Actions =====
 function handleAction(action){
-  // Room navigation
-  if(action.includes("Pantry")){currentRoom='pantry'; renderRoom(); mochkilChaos(); return;}
-  if(action.includes("bookshelf")){currentRoom='potionChamber'; renderRoom(); mochkilChaos(); return;}
-  if(action.includes("Return") || action.includes("Lab")){currentRoom='lab'; renderRoom(); mochkilChaos(); return;}
-  if(action.includes("Library")){currentRoom='library'; renderRoom(); mochkilChaos(); return;}
-  if(action.includes("Courtyard")){currentRoom='courtyard'; renderRoom(); mochkilChaos(); return;}
-  if(action.includes("Attic")){currentRoom='attic'; renderRoom(); mochkilChaos(); return;}
-  if(action.includes("Forest")){currentRoom='forest'; renderRoom(); mochkilChaos(); return;}
+  const input = action.toLowerCase();
+
+  // NPC INTERACTION PATTERN
+  if(input.startsWith("talk to ")){
+    const target = input.replace("talk to ", "").trim();
+    const npc = npcs[target];
+    
+    if(npc && npc.location === currentRoom) {
+      typeWriter(npc.dialogue["default"], mochkilChaos);
+    } else {
+      typeWriter(`There is no one named ${target} here.`, mochkilChaos);
+    }
+    return;
+  }
+
+  // ROOM NAVIGATION PATTERN
+  const roomKeys = Object.keys(rooms);
+  const destination = roomKeys.find(key => input.includes(key));
+  if(destination) {
+    currentRoom = destination;
+    renderRoom();
+    mochkilChaos();
+    return;
+  }
+  
+  // ... [Keep your existing Item & Dice code below here] ...
 
   // Items & Dice Effects
   if(action.includes("Take cookie") && currentRoom==='pantry' && !inventory.includes("cookie")){ inventory.push("cookie"); updateInventory(); typeWriter("You grab a cookie. Mochkil squeals happily!",mochkilChaos); return; }
